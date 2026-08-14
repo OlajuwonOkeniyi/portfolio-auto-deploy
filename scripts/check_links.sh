@@ -17,7 +17,11 @@
 # DESIGN DECISIONS:
 # - External timeouts → warning (not failure). We don't want a CDN blip or
 #   LinkedIn rate-limiting to block our deploy.
-# - External 4xx/5xx → error. If a link is definitively broken, fail.
+# - Bot-protection responses (403/429/999) → warning. These say "we don't serve
+#   automated clients", not "this link is broken". LinkedIn answers CI traffic
+#   with 999 and Cloudflare-fronted hosts answer with 403; failing on them makes
+#   our deploy depend on a third party's bot policy rather than on our own site.
+# - Other external 4xx/5xx → error. If a link is definitively broken, fail.
 # - Anchors (#), data URIs, mailto:, tel:, javascript: → skipped entirely.
 #   These don't resolve to network resources.
 #
@@ -92,9 +96,22 @@ for file in $HTML_FILES; do
         # -L: follow redirects (important for shortened URLs)
         # --max-time: give up after EXTERNAL_TIMEOUT seconds
         if [[ "$link" =~ ^https?:// ]]; then
+            # BUG FIX: the previous form was
+            #     HTTP_CODE=$(curl ... || echo "000")
+            # On a failed transfer curl writes its "%{http_code}" template to
+            # stdout ("000") AND exits non-zero, so the `|| echo "000"` fired as
+            # well and the substitution captured "000" + "000" = "000000".
+            # That value matched neither the 2xx/3xx pattern nor the "000"
+            # timeout branch, so every unreachable host fell through to the
+            # "definitively broken" case and hard-failed the deploy — the exact
+            # opposite of the documented behaviour above. Capture curl's output
+            # and its exit status separately, then normalise.
             HTTP_CODE=$(curl -o /dev/null -s -w "%{http_code}" \
                 --max-time "$EXTERNAL_TIMEOUT" \
-                -L "$link" 2>/dev/null || echo "000")
+                -L "$link" 2>/dev/null) || true
+            # Anything curl could not turn into a three-digit status collapses
+            # to the "unreachable" sentinel.
+            [[ "$HTTP_CODE" =~ ^[0-9]{3}$ ]] || HTTP_CODE="000"
 
             if [[ "$HTTP_CODE" =~ ^(2|3)[0-9][0-9]$ ]]; then
                 # 2xx (success) or 3xx (redirect) — link is alive
@@ -103,6 +120,11 @@ for file in $HTML_FILES; do
                 # Timeout or DNS failure. Warn but don't fail — this might be
                 # a CI network issue, not a broken link.
                 echo "  ⚠️  ${link} (timeout/unreachable — skipping)"
+            elif [[ "$HTTP_CODE" =~ ^(403|429|999)$ ]]; then
+                # Bot protection or rate limiting. The host is up and the URL
+                # resolves; it just refuses automated clients. Not our bug, and
+                # not worth blocking a deploy over.
+                echo "  ⚠️  ${link} (HTTP ${HTTP_CODE} — bot protection/rate limit, not treated as broken)"
             else
                 # 4xx (not found) or 5xx (server error) — definitively broken
                 echo "  ❌ ${link} (HTTP ${HTTP_CODE})"
