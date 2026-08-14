@@ -8,7 +8,7 @@ proper CI/CD pipeline - validate, stage, deploy, version - so a change reaches p
 way every time: `git push origin main`, and the pipeline does the rest.
 
 Built in August 2026. The site it deploys is live at
-https://olajuwonokeniyi.github.io/portfolio\-auto\-deploy/
+https://olajuwonokeniyi.github.io/portfolio-auto-deploy/
 
 ## Overview
 
