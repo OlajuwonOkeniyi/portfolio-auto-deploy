@@ -1,77 +1,831 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Software developer portfolio — building things that work.">
-    <title>Alex Chen — Developer</title>
-    <link rel="stylesheet" href="styles.css">
-    <!-- Inline SVG favicon — no external file needed, works immediately on all environments -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+<html lang="en"><head><style id="qw-theme">:root {
+  --color-bg: #121218;
+  --color-text: #e4e4ed;
+  --color-navbar-bg: #1a1a24;
+  --color-bg-chat-view: #121218;
+  --color-bg-secondary: #1a1a24;
+  --color-bg-tertiary: #1e1e2a;
+  --color-bg-hover: #2a2a38;
+  --color-surface: #1e1e2a;
+  --color-surface-hover: #2a2a38;
+  --color-surface-active: #353546;
+  --color-border: #ffffff1f;
+  --color-border-light: #ffffff0f;
+  --color-border-strong: #3a3a4e;
+  --color-primary: #8575ff;
+  --color-primary-dark: #4200db;
+  --color-primary-light: #8575ff;
+  --color-primary-bg: color-mix(in srgb, #8575ff 15%, transparent);
+  --color-primary-hover-border: #4200db;
+  --color-nav-icon-active: #8575ff;
+  --color-nav-hover-border: #8575ff;
+  --color-primary-alpha-3: color-mix(in srgb, #8575ff 3%, transparent);
+  --color-primary-alpha-5: color-mix(in srgb, #8575ff 5%, transparent);
+  --color-primary-alpha-8: color-mix(in srgb, #8575ff 8%, transparent);
+  --color-primary-alpha-12: color-mix(in srgb, #8575ff 12%, transparent);
+  --color-primary-alpha-15: color-mix(in srgb, #8575ff 15%, transparent);
+  --color-primary-alpha-20: color-mix(in srgb, #8575ff 20%, transparent);
+  --color-primary-alpha-25: color-mix(in srgb, #8575ff 25%, transparent);
+  --color-primary-alpha-30: color-mix(in srgb, #8575ff 30%, transparent);
+  --color-primary-alpha-40: color-mix(in srgb, #8575ff 40%, transparent);
+  --color-primary-alpha-50: color-mix(in srgb, #8575ff 50%, transparent);
+  --color-primary-alpha-60: color-mix(in srgb, #8575ff 60%, transparent);
+  --color-primary-subtle: color-mix(in srgb, #8575ff 25%, transparent);
+  --color-primary-border: color-mix(in srgb, #8575ff 50%, transparent);
+  --color-focus-ring: color-mix(in srgb, #8575ff 60%, transparent);
+  --color-sidebar-hover: color-mix(in srgb, #8575ff 15%, transparent);
+  --block-hover-outline: 1px dashed color-mix(in srgb, #8575ff 50%, transparent);
+  --block-selected-outline: 1px solid #8575ff;
+  --block-selection-outline-offset: 2px;
+  --block-selected-halo: 0 0 8px color-mix(in srgb, #8575ff 40%, transparent);
+  --color-accent: #8575ff;
+  --color-accent-foreground: #8575ff;
+  --color-accent-dark: #4200db;
+  --color-accent-light: color-mix(in srgb, #8575ff 15%, transparent);
+  --color-accent-inverse: #fff;
+  --color-link: #8575ff;
+  --color-primary-gradient-end: color-mix(in srgb, #8575ff 35%, transparent);
+  --color-primary-bg-solid: #1a1530;
+  --color-user-bubble: #333843;
+  --color-user-bubble-text: #e4e4ed;
+  --color-text-secondary: #a0a0b4;
+  --color-text-tertiary: #8a8a9a;
+  --color-text-muted: #6e6e82;
+  --color-text-on-primary: #fff;
+  --color-success: #4ade80;
+  --color-success-dark: #00802f;
+  --color-success-light: #d9ffd6;
+  --color-success-hover: #005c26;
+  --color-success-bg: #1c2c22;
+  --color-success-border: #0e3d1c;
+  --color-success-foreground: #4ade80;
+  --color-success-dark-foreground: #00802f;
+  --color-success-text: #4ade80;
+  --color-error: #ff6b6b;
+  --color-error-dark: #db0000;
+  --color-error-light: #ffe0e0;
+  --color-error-hover: #3b1a24;
+  --color-error-bg: #3b1a24;
+  --color-error-border: #5e1a24;
+  --color-error-active-border: #db0000;
+  --color-error-foreground: #ff6b6b;
+  --color-error-dark-foreground: #db0000;
+  --color-error-inverse: #fff;
+  --color-error-text: #ff6b6b;
+  --color-warning: #fbbf24;
+  --color-warning-dark: #573a00;
+  --color-warning-light: #fffbbd;
+  --color-warning-hover: #db9200;
+  --color-warning-bg: #3d3520;
+  --color-warning-border: #5e4a1a;
+  --color-warning-foreground: #fbbf24;
+  --color-warning-dark-foreground: #573a00;
+  --color-warning-inverse: #573a00;
+  --color-surface-warning: #fffbbd;
+  --color-text-warning: #573a00;
+  --color-info: #60a5fa;
+  --color-info-dark: #006ce0;
+  --color-info-light: #d1f1ff;
+  --color-info-hover: #003b8f;
+  --color-info-bg: #1a2a42;
+  --color-info-border: #0f3d6e;
+  --color-info-foreground: #60a5fa;
+  --color-info-dark-foreground: #002a66;
+  --color-info-inverse: #fff;
+  --color-overlay: #000000b3;
+  --color-shadow: #0000004d;
+  --color-hover: #ffffff0d;
+  --color-tooltip-bg: #1e1e2af2;
+  --color-tooltip-text: #e4e4ed;
+  --color-voice-purple: #8575ff;
+  --color-voice-purple-dark: #4200db;
+  --color-voice-purple-light: #8575ff;
+  --color-voice-red: #ff6b6b;
+  --color-voice-red-dark: #db0000;
+  --color-voice-amber: #fbbf24;
+  --color-voice-purple-glow: #8575ff66;
+  --color-voice-red-glow: #db000066;
+  --font-sans: "Amazon Ember", "Helvetica Neue", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "SF Mono", "Monaco", "Menlo", "Consolas", monospace;
+  --text-2xs: .5625rem;
+  --text-xs: .625rem;
+  --text-sm: .6875rem;
+  --text-base: .75rem;
+  --text-md: .8125rem;
+  --text-lg: .875rem;
+  --text-xl: 1rem;
+  --text-2xl: 1.125rem;
+  --text-3xl: 1.25rem;
+  --text-4xl: 1.5rem;
+  --text-5xl: 2rem;
+  --spacing-1: calc(.25rem * 1);
+  --spacing-1-5: calc(.25rem * 1.5);
+  --spacing-2: calc(.25rem * 2);
+  --spacing-3: calc(.25rem * 3);
+  --spacing-4: calc(.25rem * 4);
+  --spacing-5: calc(.25rem * 5);
+  --spacing-6: calc(.25rem * 6);
+  --spacing-7: calc(.25rem * 7);
+  --spacing-8: calc(.25rem * 8);
+  --spacing-9: calc(.25rem * 9);
+  --spacing-10: calc(.25rem * 10);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-card: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 8px;
+  --shadow-sm: 0 1px 2px #0003;
+  --shadow-md: 0 4px 12px #0000004d;
+  --color-success-bg-solid: #1a3d28;
+  --color-error-bg-solid: #4a2028;
+  --color-error-border-solid: #5e1a24;
+  --color-warning-bg-solid: #4a3a1e;
+  --color-warning-text: #fbbf24;
+  --color-info-bg-solid: #1a3050;
+  --color-info-bg-solid-alt: #222240;
+  --color-info-text: #60a5fa;
+  --color-info-text-alt: #818cf8;
+  --color-emerald: #34d399;
+  --color-teal: #5eead4;
+  --color-code-bg: #1e1e2a;
+  --color-code-header-bg: #252535;
+  --color-code-text: #e4e4ed;
+  --color-code-border: #2e2e3e;
+  --color-code-muted: #6e6e82;
+  --color-inline-code-bg: #1e1e2a;
+  --color-inline-code-text: #e4e4ed;
+  --color-inline-code-border: #2e2e3e;
+  --color-scrollbar-thumb: #3a3a4e;
+  --color-scrollbar-track: transparent;
+  --color-graph-node-text: #e4e4ed;
+  --color-graph-node-text-dim: #6e6e82;
+  --color-graph-edge-default: #6e6e82;
+  --color-graph-edge-cross: #f39c12;
+  --color-graph-edge-text: #a0a0b4;
+  --color-graph-edge-stroke: #1a1a24;
+  --color-graph-highlight-bg: #ff6b6b;
+  --color-graph-highlight-border: #e74c3c;
+  --color-graph-search-bg: gold;
+  --color-graph-search-border: orange;
+  --color-graph-focus-border: #f44;
+  --color-graph-external-border: #6e6e82;
+  --color-graph-cat-file: #5dade2;
+  --color-graph-cat-folder: #aab7b8;
+  --color-graph-cat-file-aggregate: #5499c7;
+  --color-graph-cat-class: #bb8fce;
+  --color-graph-cat-function: #58d68d;
+  --color-graph-cat-method: #48c9b0;
+  --color-graph-cat-variable: #f5b041;
+  --color-graph-cat-import: #eb984e;
+  --color-graph-cat-module: #7e8ce0;
+  --color-graph-cat-concept: #ec7063;
+  --color-graph-cat-person: #ff8a8a;
+  --color-graph-cat-org: #76d7c4;
+  --color-graph-cat-organization: #76d7c4;
+  --color-graph-cat-product: #b8b0fe;
+  --color-graph-cat-metric: #fea0c0;
+  --color-graph-cat-location: #7e9bb5;
+  --color-graph-cat-date: #f092c0;
+  --color-graph-cat-code: #5dade2;
+  --color-graph-cat-doc: #aab7b8;
+  --color-graph-cat-url: #45d6b5;
+  --color-graph-cat-email: #8e7cf7;
+  --color-graph-cat-unknown: #d5dbdb;
+  --color-graph-rel-contains: #d5dbdb;
+  --color-graph-rel-extends: #bb8fce;
+  --color-graph-rel-implements: #5dade2;
+  --color-graph-rel-imports: #eb984e;
+  --color-graph-rel-uses: #58d68d;
+  --color-graph-rel-calls: #52be80;
+  --color-graph-rel-references: #f5b041;
+  --color-graph-rel-related-to: #aab7b8;
+  --color-graph-rel-works-on: #ec7063;
+  --color-graph-rel-owns: #48c9b0;
+  --color-graph-rel-depends-on: #eb984e;
+  --color-graph-rel-parent-of: #d5dbdb;
+  --qs-content: #fff;
+  --qs-main: #fff;
+  --qs-primary-foreground: #131920;
+  --qs-secondary-foreground: #656871;
+  --qs-tertiary-foreground: #6e6e82;
+  --qs-placeholder-foreground: #8c8c94;
+  --qs-divider: #dedee3;
+  --qs-default-border: #8c8c94;
+  --qs-neutral-soft: #b4b4bb;
+  --qs-neutral-gray-50: #1e1e2a;
+  --qs-tertiary-background: #1e1e2a;
+  --qs-action-hover: #f3f3f7;
+  --qs-primary-default: #4200db;
+  --qs-primary-dark: #35009e;
+  --qs-primary-light: #e8e6ff;
+  --qs-success-default: #00802f;
+  --qs-error-default: #db0000;
+  --qs-font-sans: "Amazon Ember", "Helvetica Neue", "Segoe UI", Helvetica, Arial, sans-serif;
+  --safe-top: 0px;
+  --safe-bottom: 0px;
+  --safe-left: 0px;
+  --safe-right: 0px;
+  --qs-font-family: "Amazon Ember", "Helvetica Neue", "Segoe UI", Helvetica, Arial, sans-serif;
+  --qs-font-base-letter-spacing: .15px;
+  --qs-shadow-sm: 0 0 2px 0 #00000029, 0 0 4px 0 #00000029;
+  --qs-shadow-md: 0 0 2px 0 #00000029, 0 2px 8px 1px #00000029;
+  --qs-shadow-lg: 0 4px 16px 4px #00000029, 0 2px 6px 1px #00000029;
+  --qs-shadow-xl: 0 4px 8px 2px #00000029, 0 6px 20px 4px #00000029;
+  --qs-width-modal-sm: 384px;
+  --qs-width-modal-md: 600px;
+  --qs-width-modal-lg: 1136px;
+  --qs-grid-gap: 16px;
+  --qs-grid-gap-xl: 24px;
+  --qs-primary-medium: #8575ff;
+  --qs-primary-inverse: #fff;
+  --qs-neutral-lightest: #f9f9fb;
+  --qs-neutral-light: #f3f3f7;
+  --qs-neutral-default: #dedee3;
+  --qs-neutral-medium: #8c8c94;
+  --qs-neutral-deep: #656871;
+  --qs-neutral-dark: #333843;
+  --qs-neutral-strong: #131920;
+  --qs-neutral-white: #fff;
+  --qs-neutral-black: #000;
+  --qs-success-medium: #005c26;
+  --qs-success-dark: #00471e;
+  --qs-success-light: #d9ffd6;
+  --qs-success-inverse: #fff;
+  --qs-info-default: #006ce0;
+  --qs-info-medium: #003b8f;
+  --qs-info-dark: #002a66;
+  --qs-info-light: #d1f1ff;
+  --qs-info-inverse: #fff;
+  --qs-warning-default: #f2b100;
+  --qs-warning-medium: #db9200;
+  --qs-warning-dark: #573a00;
+  --qs-warning-light: #fffbbd;
+  --qs-warning-inverse: #573a00;
+  --qs-warning-experimental: #f2b100;
+  --qs-warning-experimental-light: #fffbbd;
+  --qs-warning-experimental-light-foreground: #fffbbd;
+  --qs-error-medium: #900;
+  --qs-error-dark: #700000;
+  --qs-error-light: #ffe0e0;
+  --qs-error-inverse: #fff;
+  --qs-connection-default: #db3300;
+  --qs-connection-soft: #ff997a;
+  --qs-connection-light: #ffe0d6;
+  --qs-connection-dark: #661800;
+  --qs-automation-default: #b3008f;
+  --qs-automation-medium: #d600ba;
+  --qs-automation-soft: #ff94f1;
+  --qs-automation-light: #ffe0fb;
+  --qs-automation-dark: #660052;
+  --qs-insight-default: #a000b8;
+  --qs-insight-soft: #f299ff;
+  --qs-insight-light: #fce6ff;
+  --qs-insight-dark: #590066;
+  --qs-visualization-default: #7300e5;
+  --qs-visualization-soft: #d4a8ff;
+  --qs-visualization-light: #f2e5ff;
+  --qs-visualization-dark: #45008a;
+  --qs-spice: #ff9800;
+  --qs-coachmark: #006ce0;
+  --qs-brand: #fff;
+  --qs-brand-foreground: #131920;
+  --qs-brand-navbar: #131920;
+  --qs-brand-navbar-foreground: #fff;
+  --qs-brand-navbar-light: #dedee3;
+  --qs-brand-navbar-dark: #000;
+  --qs-application-navbar: #4200db;
+  --qs-application-navbar-foreground: #fff;
+  --qs-application-navbar-light: #e8e6ff;
+  --qs-application-navbar-dark: #35009e;
+  --qs-dimension: #4200db;
+  --qs-dimension-foreground: #fff;
+  --qs-dimension-experimental: #4200db;
+  --qs-dimension-experimental-foreground: #4200db;
+  --qs-measure: #00802f;
+  --qs-measure-foreground: #fff;
+  --qs-measure-experimental: #f2b100;
+  --qs-measure-experimental-foreground: #f2b100;
+  --qs-content-inverse: #333843;
+  --qs-content-inverse-active: #131920;
+  --qs-secondary: #dedee3;
+  --qs-disabled: #8c8c94;
+  --qs-divider-light: #f3f3f7;
+  --qs-hover-border: #333843;
+  --qs-active-border: #4200db;
+  --qs-disabled-border: #dedee3;
+  --qs-error-border: #ffe0e0;
+  --qs-error-active-border: #db0000;
+  --qs-disabled-foreground: #b4b4bb;
+  --qs-primary-inverse-foreground: #fff;
+  --qs-error-foreground: #db0000;
+  --qs-contrast-foreground: #131920;
+  --qs-main-foreground: #131920;
+  --qs-main-secondary-foreground: #656871;
+  --qs-action-disabled: #f3f3f7;
+  --qs-action-active: #e8e6ff;
+  --qs-default-badge: #dedee3;
+  --qs-tag-default: #dedee3;
+  --qs-tag-soft-border: #b4b4bb;
+  --qs-focus-offset: 1px;
+  --qs-toggle-tile-sm: calc(.25rem * 8);
+  --qs-toggle-tile-md: calc(.25rem * 12);
+  --qs-toggle-tile-lg: calc(.25rem * 15);
+  --qs-shadow-pin-right: inset 4px 0 4px -4px #00000029;
+  --qs-shadow-pin-left: inset -4px 0 4px -4px #00000029;
+  --react-pdf-text-layer: 1;
+  --highlight-bg-color: #b400aa;
+  --highlight-selected-bg-color: #006400;
+  --react-pdf-annotation-layer: 1;
+  --annotation-unfocused-field-background: url("data:image/svg+xml;charset=UTF-8,<svg width='1px' height='1px' xmlns='http://www.w3.org/2000/svg'><rect width='100%' height='100%' style='fill:rgba(0, 54, 255, 0.13);'/></svg>");
+  --input-focus-border-color: Highlight;
+  --input-focus-outline: 1px solid Canvas;
+  --input-unfocused-border-color: transparent;
+  --input-disabled-border-color: transparent;
+  --input-hover-border-color: black;
+  --link-outline: none;
+  color-scheme: dark;
+}
+body { background: var(--color-bg); color: var(--color-text); }
+a { color: var(--color-link, var(--color-primary)); }</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Olajuwon Okeniyi — AI Operations &amp; Support Engineer</title>
+<meta name="description" content="Olajuwon Okeniyi, MSc — AI Operations &amp; Support Engineer specializing in automation, AI tooling, API integration, and technical support engineering.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --bg:#0a0e1a;
+  --bg-soft:#0f1524;
+  --surface:#131b2e;
+  --surface-2:#182236;
+  --border:#22304d;
+  --border-glow:#2c4066;
+  --text:#e8edf7;
+  --text-2:#9fb0cc;
+  --text-muted:#647089;
+  --primary:#22d3ee;
+  --primary-2:#38bdf8;
+  --accent:#818cf8;
+  --accent-2:#c084fc;
+  --success:#34d399;
+  --warn:#fbbf24;
+  --font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --radius:16px;
+  --radius-sm:10px;
+  --maxw:1120px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font);
+  line-height:1.65;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+/* Ambient background glow */
+body::before{
+  content:"";
+  position:fixed;inset:0;z-index:-2;
+  background:
+    radial-gradient(60vw 60vw at 15% -10%, rgba(34,211,238,.10), transparent 60%),
+    radial-gradient(50vw 50vw at 100% 10%, rgba(129,140,248,.10), transparent 55%),
+    radial-gradient(50vw 50vw at 50% 120%, rgba(192,132,252,.08), transparent 60%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);
+  background-size:48px 48px;
+  mask-image:radial-gradient(circle at 50% 0,black,transparent 80%);
+}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+.mono{font-family:var(--mono)}
+.grad-text{background:linear-gradient(120deg,var(--primary),var(--accent) 55%,var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:50;
+  backdrop-filter:blur(14px);
+  background:rgba(10,14,26,.72);
+  border-bottom:1px solid var(--border);
+}
+.nav-inner{max-width:var(--maxw);margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.3px}
+.brand .dot{width:10px;height:10px;border-radius:50%;background:var(--primary);box-shadow:0 0 12px var(--primary)}
+.nav-links{display:flex;gap:26px;font-size:14px;font-weight:500;color:var(--text-2)}
+.nav-links a{transition:color .15s}
+.nav-links a:hover{color:var(--primary)}
+.nav-cta{border:1px solid var(--border-glow);color:var(--text);padding:8px 16px;border-radius:100px;font-size:13px;font-weight:600;transition:.2s}
+.nav-cta:hover{border-color:var(--primary);color:var(--primary);box-shadow:0 0 20px rgba(34,211,238,.25)}
+@media(max-width:760px){.nav-links{display:none}}
+
+/* HERO */
+.hero{padding:96px 0 72px;position:relative}
+.badge{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--primary);background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.25);padding:7px 14px;border-radius:100px;letter-spacing:.4px;text-transform:uppercase}
+.badge .pulse{width:7px;height:7px;border-radius:50%;background:var(--success);box-shadow:0 0 10px var(--success);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.hero h1{font-size:clamp(38px,6vw,68px);line-height:1.05;font-weight:900;letter-spacing:-1.5px;margin:22px 0 8px}
+.hero .title-line{font-size:clamp(16px,2.4vw,22px);font-weight:600;color:var(--text-2);font-family:var(--mono)}
+.hero .title-line .sep{color:var(--primary);margin:0 10px}
+.hero p.lead{max-width:660px;color:var(--text-2);font-size:clamp(15px,1.6vw,18px);margin:24px 0 0}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}
+.btn{display:inline-flex;align-items:center;gap:10px;font-weight:600;font-size:15px;padding:13px 24px;border-radius:100px;transition:.2s;cursor:pointer;border:1px solid transparent}
+.btn-primary{background:linear-gradient(120deg,var(--primary),var(--primary-2));color:#04121a;box-shadow:0 8px 30px rgba(34,211,238,.28)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(34,211,238,.4)}
+.btn-ghost{border-color:var(--border-glow);color:var(--text)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent);box-shadow:0 0 24px rgba(129,140,248,.2)}
+.socials{display:flex;gap:16px;margin-top:30px;font-size:19px;color:var(--text-muted)}
+.socials a{transition:.2s}
+.socials a:hover{color:var(--primary);transform:translateY(-2px)}
+
+/* STAT STRIP */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:64px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px 20px;position:relative;overflow:hidden}
+.stat::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--primary),var(--accent))}
+.stat .num{font-family:var(--mono);font-size:32px;font-weight:700;color:var(--text);line-height:1}
+.stat .lbl{color:var(--text-2);font-size:13px;margin-top:8px}
+@media(max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+/* SECTIONS */
+section{padding:84px 0}
+.sec-head{margin-bottom:44px}
+.sec-kicker{font-family:var(--mono);font-size:13px;color:var(--primary);letter-spacing:2px;text-transform:uppercase}
+.sec-title{font-size:clamp(28px,4vw,42px);font-weight:800;letter-spacing:-.5px;margin-top:10px}
+.sec-sub{color:var(--text-2);margin-top:12px;max-width:640px}
+
+/* ABOUT */
+.about-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:40px;align-items:start}
+@media(max-width:860px){.about-grid{grid-template-columns:1fr}}
+.about-text p{color:var(--text-2);margin-bottom:16px;font-size:16px}
+.about-text strong{color:var(--text);font-weight:600}
+.about-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:26px}
+.about-card h4{font-size:14px;text-transform:uppercase;letter-spacing:1px;color:var(--primary);font-family:var(--mono);margin-bottom:18px}
+.about-list{list-style:none;display:flex;flex-direction:column;gap:14px}
+.about-list li{display:flex;gap:12px;font-size:14.5px;color:var(--text-2)}
+.about-list i{color:var(--primary);margin-top:4px}
+.about-list b{color:var(--text);font-weight:600}
+
+/* PILLARS */
+.pillars{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+@media(max-width:860px){.pillars{grid-template-columns:1fr}}
+.pillar{background:linear-gradient(160deg,var(--surface),var(--bg-soft));border:1px solid var(--border);border-radius:var(--radius);padding:30px;transition:.25s;position:relative;overflow:hidden}
+.pillar:hover{transform:translateY(-4px);border-color:var(--border-glow);box-shadow:0 18px 50px rgba(0,0,0,.4)}
+.pillar .ic{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;font-size:22px;background:rgba(34,211,238,.1);color:var(--primary);border:1px solid rgba(34,211,238,.2);margin-bottom:18px}
+.pillar:nth-child(2) .ic{background:rgba(129,140,248,.1);color:var(--accent);border-color:rgba(129,140,248,.2)}
+.pillar:nth-child(3) .ic{background:rgba(192,132,252,.1);color:var(--accent-2);border-color:rgba(192,132,252,.2)}
+.pillar:nth-child(4) .ic{background:rgba(52,211,153,.1);color:var(--success);border-color:rgba(52,211,153,.2)}
+.pillar h3{font-size:19px;font-weight:700;margin-bottom:10px}
+.pillar p{color:var(--text-2);font-size:14.5px;margin-bottom:14px}
+.pillar .tags{display:flex;flex-wrap:wrap;gap:8px}
+.pillar .tag{font-family:var(--mono);font-size:11.5px;color:var(--text-2);background:var(--surface-2);border:1px solid var(--border);padding:4px 10px;border-radius:6px}
+
+/* TIMELINE / EXPERIENCE */
+.timeline{position:relative;padding-left:34px}
+.timeline::before{content:"";position:absolute;left:9px;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--primary),var(--accent),transparent)}
+.job{position:relative;padding-bottom:40px}
+.job:last-child{padding-bottom:0}
+.job::before{content:"";position:absolute;left:-30px;top:6px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--primary);box-shadow:0 0 12px var(--primary)}
+.job .jtop{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;align-items:baseline}
+.job .role{font-size:19px;font-weight:700}
+.job .co{color:var(--primary);font-weight:600;font-size:15px}
+.job .date{font-family:var(--mono);font-size:13px;color:var(--text-muted);white-space:nowrap}
+.job ul{list-style:none;margin-top:14px;display:flex;flex-direction:column;gap:10px}
+.job ul li{position:relative;padding-left:20px;color:var(--text-2);font-size:14.5px}
+.job ul li::before{content:"▹";position:absolute;left:0;color:var(--primary)}
+.job ul li b{color:var(--text);font-weight:600}
+
+/* SKILLS */
+.skill-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+@media(max-width:860px){.skill-grid{grid-template-columns:1fr}}
+.skill-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+.skill-card h4{font-size:15px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.skill-card h4 i{color:var(--primary)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:var(--mono);font-size:12.5px;color:var(--text-2);background:var(--surface-2);border:1px solid var(--border);padding:6px 12px;border-radius:8px;transition:.2s}
+.chip:hover{border-color:var(--primary);color:var(--primary)}
+
+/* CERTS + EDU */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+@media(max-width:860px){.two-col{grid-template-columns:1fr}}
+.edu-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:16px}
+.edu-item .deg{font-weight:700;font-size:16px}
+.edu-item .sch{color:var(--primary);font-size:14px;font-weight:600;margin-top:2px}
+.edu-item .meta{color:var(--text-muted);font-size:13px;font-family:var(--mono);margin-top:6px}
+.edu-item .extra{color:var(--text-2);font-size:13.5px;margin-top:10px}
+.cert-row{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:12px;transition:.2s}
+.cert-row:hover{border-color:var(--border-glow);transform:translateX(4px)}
+.cert-row i{color:var(--primary);font-size:18px}
+.cert-row span{font-weight:500;font-size:14.5px}
+
+/* CONTACT */
+.contact{text-align:center;background:linear-gradient(160deg,var(--surface),var(--bg-soft));border:1px solid var(--border);border-radius:24px;padding:64px 32px;position:relative;overflow:hidden}
+.contact::before{content:"";position:absolute;top:-40%;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(circle,rgba(34,211,238,.12),transparent 70%)}
+.contact h2{font-size:clamp(28px,4vw,40px);font-weight:800;position:relative}
+.contact p{color:var(--text-2);max-width:520px;margin:16px auto 0;position:relative}
+.contact-methods{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-top:36px;position:relative}
+.cmethod{display:flex;align-items:center;gap:10px;background:var(--surface-2);border:1px solid var(--border);padding:14px 22px;border-radius:100px;font-size:14.5px;font-weight:500;transition:.2s}
+.cmethod:hover{border-color:var(--primary);color:var(--primary);transform:translateY(-2px);box-shadow:0 8px 24px rgba(34,211,238,.2)}
+.cmethod i{color:var(--primary)}
+
+footer{text-align:center;padding:40px 24px;color:var(--text-muted);font-size:13px;border-top:1px solid var(--border);margin-top:20px}
+footer .mono{color:var(--text-2)}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(24px)}
+@media(prefers-reduced-motion:no-preference){
+  .reveal.in{animation:rise .6s cubic-bezier(.2,.7,.2,1) forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+}
+</style>
 </head>
 <body>
-    <main class="container">
 
-        <!-- ═══ HERO SECTION ═══════════════════════════════════════════════
-             Primary introduction — name, title, and one-liner pitch.
-             Kept minimal: no photo, no animation, just text. Loads fast. -->
-        <header class="hero">
-            <div class="hero-content">
-                <h1>Alex Chen</h1>
-                <p class="title">Software Developer</p>
-                <p class="tagline">I build reliable systems and clean interfaces.<br>Currently focused on cloud infrastructure and developer tooling.</p>
-            </div>
-        </header>
+<nav>
+  <div class="nav-inner">
+    <a class="brand" href="#top"><span class="dot"></span> Olajuwon&nbsp;Okeniyi<span style="color:var(--text-muted);font-weight:500">, MSc</span></a>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#expertise">Expertise</a>
+      <a href="#experience">Experience</a>
+      <a href="#skills">Skills</a>
+      <a href="#education">Education</a>
+    </div>
+    <a class="nav-cta" href="#contact">Get in touch</a>
+  </div>
+</nav>
 
-        <!-- ═══ SOCIAL LINKS ══════════════════════════════════════════════
-             Quick-access cards to external profiles.
-             Uses aria-labels for accessibility (screen readers announce the
-             destination, not just "link"). -->
-        <section class="links">
-            <a href="https://github.com/alexchen" class="link-card" aria-label="GitHub profile">
-                <span class="link-icon">&#9679;</span>
-                <span class="link-text">GitHub</span>
-            </a>
-            <a href="https://linkedin.com/in/alexchen" class="link-card" aria-label="LinkedIn profile">
-                <span class="link-icon">&#9679;</span>
-                <span class="link-text">LinkedIn</span>
-            </a>
-            <a href="mailto:alex@example.com" class="link-card" aria-label="Send email">
-                <span class="link-icon">&#9679;</span>
-                <span class="link-text">Email</span>
-            </a>
-        </section>
+<header class="hero wrap" id="top">
+  <span class="badge reveal"><span class="pulse"></span> Available for new opportunities</span>
+  <h1 class="reveal">Building reliable systems<br>at the intersection of<br><span class="grad-text">AI &amp; support engineering.</span></h1>
+  <div class="title-line reveal">AI Operations &amp; Support Engineer <span class="sep">|</span> Automation &amp; Tooling</div>
+  <p class="lead reveal">I help teams ship dependable AI systems and keep them running, from designing annotation frameworks and evaluation pipelines for large-scale multimodal models, to owning end-to-end technical support across Windows, Linux, and macOS. I turn recurring problems into automation, runbooks, and measurable operational wins.</p>
+  <div class="hero-actions reveal">
+    <a class="btn btn-primary" href="#contact"><i class="fa-solid fa-paper-plane"></i> Let's work together</a>
+    <a class="btn btn-ghost" href="#experience"><i class="fa-solid fa-briefcase"></i> View experience</a>
+  </div>
+  <div class="socials reveal">
+    <a href="https://linkedin.com/in/okeniyi-olajuwon" target="_blank" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+    <a href="mailto:iokeniyi547@gmail.com" title="Email"><i class="fa-solid fa-envelope"></i></a>
+    <a href="tel:3177759132" title="Phone"><i class="fa-solid fa-phone"></i></a>
+  </div>
 
-        <!-- ═══ PROJECTS SECTION ══════════════════════════════════════════
-             Highlight 2-3 recent projects. Keep descriptions short — the
-             reader should get the gist in one line, then click through
-             to the repo for details. -->
-        <section class="projects">
-            <h2>Recent Work</h2>
-            <ul class="project-list">
-                <li>
-                    <strong>Portfolio Auto-Deploy</strong>
-                    <span class="project-desc">— CI/CD pipeline for this site (you're looking at it)</span>
-                </li>
-                <li>
-                    <strong>Config Drift Monitor</strong>
-                    <span class="project-desc">— Detects infrastructure drift across environments</span>
-                </li>
-                <li>
-                    <strong>API Gateway Template</strong>
-                    <span class="project-desc">— Reusable gateway pattern with rate limiting and auth</span>
-                </li>
-            </ul>
-        </section>
+  <div class="stats">
+    <div class="stat reveal"><div class="num" data-count="800">0</div><div class="lbl">AI datasets built &amp; annotated</div></div>
+    <div class="stat reveal"><div class="num" data-count="99" data-suffix="%+">0</div><div class="lbl">System uptime maintained</div></div>
+    <div class="stat reveal"><div class="num" data-count="100" data-suffix="+">0</div><div class="lbl">Users supported across OSes</div></div>
+    <div class="stat reveal"><div class="num" data-count="30" data-suffix="%">0</div><div class="lbl">Model training efficiency gain</div></div>
+  </div>
+</header>
 
-        <!-- ═══ FOOTER ════════════════════════════════════════════════════
-             Links back to the pipeline repo (meta/self-referential) and
-             shows the current deploy version for quick debugging. -->
-        <footer class="footer">
-            <p>Deployed automatically via <a href="https://github.com/alexchen/portfolio-auto-deploy">GitHub Actions</a>.</p>
-            <p class="version">Last deploy: <span id="deploy-version">v2024.03.15.1</span></p>
-        </footer>
+<!-- ABOUT -->
+<section id="about" class="wrap">
+  <div class="sec-head reveal">
+    <div class="sec-kicker">// about</div>
+    <h2 class="sec-title">Operations-minded engineer,<br>obsessed with reliability</h2>
+  </div>
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p>I'm <strong>Olajuwon Okeniyi</strong>, an <strong>AI Operations &amp; Support Engineer</strong> with a Master's in Computer Information Science (Software Engineering concentration, GPA 3.91). My work sits where AI systems meet real operations: building the data and evaluation pipelines that make models trustworthy, and keeping the infrastructure and users around them productive.</p>
+      <p>Across roles at <strong>Amazon</strong>, <strong>xAI</strong>, and <strong>Invisible Technologies</strong>, I've delivered high-quality training data at scale, designed <strong>annotation and QA frameworks</strong>, and partnered directly with scientists and engineers to remove recurring workflow friction. Earlier, as a <strong>Technical Support</strong> engineer, I owned end-to-end support for 100+ users and cut resolution time with runbooks, SOPs, and BI dashboards.</p>
+      <p>I care about <strong>APIs, automation, and clean tooling</strong> - the leverage that turns a manual, error-prone process into something measurable and repeatable. I bring a leader's mindset: I set standards, mentor peers through audits, and drive process improvements that hold up under scale.</p>
+    </div>
+    <div class="about-card reveal">
+      <h4><i class="fa-solid fa-location-dot"></i> At a glance</h4>
+      <ul class="about-list">
+        <li><i class="fa-solid fa-briefcase"></i><span><b>Focus:</b> AI Operations, Support Engineering, Automation &amp; Tooling</span></li>
+        <li><i class="fa-solid fa-graduation-cap"></i><span><b>MSc</b> Computer Information Science - Software Engineering (GPA 3.91)</span></li>
+        <li><i class="fa-solid fa-code"></i><span><b>Core stack:</b> Python, SQL, R, Power BI, Tableau, ETL</span></li>
+        <li><i class="fa-solid fa-certificate"></i><span><b>Certified:</b> CompTIA A+, Prompt Engineering, Agile Essentials</span></li>
+        <li><i class="fa-solid fa-desktop"></i><span><b>Environments:</b> Windows · Linux · macOS · Cloud</span></li>
+        <li><i class="fa-solid fa-circle-check"></i><span><b>Status:</b> Open to AI Ops / Support Engineering roles</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
 
-    </main>
-</body>
-</html>
+<!-- EXPERTISE PILLARS -->
+<section id="expertise" class="wrap">
+  <div class="sec-head reveal">
+    <div class="sec-kicker">// what i do</div>
+    <h2 class="sec-title">Four pillars of impact</h2>
+    <p class="sec-sub">A blend of support engineering depth and AI operations range - backed by coding, APIs, and automation.</p>
+  </div>
+  <div class="pillars">
+    <div class="pillar reveal">
+      <div class="ic"><i class="fa-solid fa-headset"></i></div>
+      <h3>Support Engineering</h3>
+      <p>End-to-end technical support across Windows, Linux, and macOS - triage, troubleshooting, hardware/software/network resolution, and escalation management with 99%+ uptime.</p>
+      <div class="tags"><span class="tag">Troubleshooting</span><span class="tag">Incident triage</span><span class="tag">Runbooks &amp; SOPs</span><span class="tag">Help desk</span></div>
+    </div>
+    <div class="pillar reveal">
+      <div class="ic"><i class="fa-solid fa-code"></i></div>
+      <h3>Coding &amp; APIs</h3>
+      <p>Python for data processing, evaluation, and automation; SQL for analytics; API-driven workflows and code evaluation/debugging to validate and improve AI systems.</p>
+      <div class="tags"><span class="tag">Python</span><span class="tag">SQL</span><span class="tag">REST APIs</span><span class="tag">Code review &amp; debugging</span></div>
+    </div>
+    <div class="pillar reveal">
+      <div class="ic"><i class="fa-solid fa-robot"></i></div>
+      <h3>AI Operations</h3>
+      <p>Design annotation frameworks and QA pipelines for large-scale multimodal models; run peer audits, evaluate model outputs, and align guidelines with scientists and engineers.</p>
+      <div class="tags"><span class="tag">Data annotation</span><span class="tag">Model evaluation</span><span class="tag">QA frameworks</span><span class="tag">Prompt engineering</span></div>
+    </div>
+    <div class="pillar reveal">
+      <div class="ic"><i class="fa-solid fa-gears"></i></div>
+      <h3>Automation &amp; Tooling</h3>
+      <p>Identify recurring workflow issues and build the automation, tooling, and dashboards that remove them — reducing rework, errors, and resolution time at scale.</p>
+      <div class="tags"><span class="tag">Process automation</span><span class="tag">ETL</span><span class="tag">Power BI / Tableau</span><span class="tag">Workflow optimization</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience" class="wrap">
+  <div class="sec-head reveal">
+    <div class="sec-kicker">// experience</div>
+    <h2 class="sec-title">Professional journey</h2>
+  </div>
+  <div class="timeline">
+    <div class="job reveal">
+      <div class="jtop">
+        <div><span class="role">ML Data Operations Specialist</span> · <span class="co">Amazon</span></div>
+        <span class="date">Nov 2025 — Present</span>
+      </div>
+      <ul>
+        <li>Partner with AGI scientists and cross-functional stakeholders to deliver <b>300+ high-quality training datasets monthly</b>, supporting large-scale multimodal AI model development.</li>
+        <li>Conduct <b>100+ peer audits monthly</b>, guiding annotation best practices and <b>reducing rework by 15%</b> while improving training efficiency.</li>
+        <li>Drive process-improvement initiatives — identifying recurring workflow issues and collaborating with engineering teams to implement scalable solutions across global data operations.</li>
+        <li>Refine annotation guidelines and operational processes with engineers, scientists, and QA teams to ensure seamless delivery and stakeholder alignment.</li>
+      </ul>
+    </div>
+    <div class="job reveal">
+      <div class="jtop">
+        <div><span class="role">AI Tutor / Data Analyst</span> · <span class="co">xAI</span></div>
+        <span class="date">May 2025 — Nov 2025</span>
+      </div>
+      <ul>
+        <li>Built and annotated <b>500+ high-quality datasets</b> supporting multimodal generative AI, boosting model training efficiency by <b>30%</b>.</li>
+        <li>Evaluated <b>200+ AI outputs monthly</b> for accuracy and relevance, improving model reliability by 10% through rigorous QA.</li>
+        <li>Designed annotation frameworks that reduced workflow errors by <b>20%</b> and increased data quality by 15% across 10+ projects.</li>
+        <li>Audited peer annotations to ensure 100% guideline compliance and cut error rates by 20%.</li>
+      </ul>
+    </div>
+    <div class="job reveal">
+      <div class="jtop">
+        <div><span class="role">Advanced AI Data Trainer / QA Analyst</span> · <span class="co">Invisible Technologies Inc.</span></div>
+        <span class="date">Jun 2023 — Apr 2025</span>
+      </div>
+      <ul>
+        <li>Trained AI models to interpret and generate natural language, optimizing performance through data labeling, <b>code evaluation, and debugging</b> with QA validation.</li>
+        <li>Ran quality assurance on <b>150+ outputs weekly</b> against established criteria to ensure 90% correctness.</li>
+        <li>Collaborated with engineers and researchers to refine annotation guidelines and tooling, reducing workflow inefficiencies by 20%.</li>
+        <li>Supported development and evaluation of AI conversational systems, improving model accuracy by 15% via user-feedback and trend analysis.</li>
+      </ul>
+    </div>
+    <div class="job reveal">
+      <div class="jtop">
+        <div><span class="role">Technical Support</span> · <span class="co">Center for Innovation &amp; Entrepreneurship</span></div>
+        <span class="date">Jul 2024 — Jul 2025</span>
+      </div>
+      <ul>
+        <li>Owned end-to-end technical support for <b>100+ users</b> across Windows, Linux, and macOS, maintaining <b>99%+ system uptime</b>.</li>
+        <li>Managed <b>40+ help desk tickets monthly</b> resolving hardware, software, and network issues while escalating the 5% most complex incidents.</li>
+        <li>Created and maintained internal <b>runbooks, SOPs, and knowledge base articles</b> to standardize operations and improve resolution time.</li>
+        <li>Enhanced decision-making through data analytics and BI dashboards, reducing customer pain points by <b>25%</b> across 10+ projects.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills" class="wrap">
+  <div class="sec-head reveal">
+    <div class="sec-kicker">// toolbox</div>
+    <h2 class="sec-title">Skills &amp; capabilities</h2>
+  </div>
+  <div class="skill-grid">
+    <div class="skill-card reveal">
+      <h4><i class="fa-solid fa-terminal"></i> Programming &amp; Data</h4>
+      <div class="chips">
+        <span class="chip">Python</span><span class="chip">NumPy</span><span class="chip">Pandas</span><span class="chip">Scikit-learn</span><span class="chip">TensorFlow</span><span class="chip">SQL</span><span class="chip">R</span><span class="chip">ETL</span><span class="chip">Data Warehousing</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <h4><i class="fa-solid fa-robot"></i> AI Operations</h4>
+      <div class="chips">
+        <span class="chip">Data Annotation</span><span class="chip">Model Evaluation</span><span class="chip">QA Frameworks</span><span class="chip">Prompt Engineering</span><span class="chip">Multimodal Data</span><span class="chip">Audit &amp; Compliance</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <h4><i class="fa-solid fa-headset"></i> Support Engineering</h4>
+      <div class="chips">
+        <span class="chip">Windows</span><span class="chip">Linux</span><span class="chip">macOS</span><span class="chip">Troubleshooting</span><span class="chip">Networking</span><span class="chip">Help Desk</span><span class="chip">Runbooks / SOPs</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <h4><i class="fa-solid fa-chart-line"></i> Analytics &amp; BI</h4>
+      <div class="chips">
+        <span class="chip">Power BI</span><span class="chip">Tableau</span><span class="chip">Data Visualization</span><span class="chip">Statistical Analysis</span><span class="chip">BI Dashboards</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <h4><i class="fa-solid fa-gears"></i> Automation &amp; Process</h4>
+      <div class="chips">
+        <span class="chip">Workflow Automation</span><span class="chip">Process Improvement</span><span class="chip">Agile / SaaS Tools</span><span class="chip">Cloud Computing</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <h4><i class="fa-solid fa-users"></i> Leadership &amp; Collaboration</h4>
+      <div class="chips">
+        <span class="chip">Peer Mentoring</span><span class="chip">Cross-functional Partnership</span><span class="chip">Stakeholder Alignment</span><span class="chip">Customer Success</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION + CERTS -->
+<section id="education" class="wrap">
+  <div class="sec-head reveal">
+    <div class="sec-kicker">// credentials</div>
+    <h2 class="sec-title">Education &amp; certifications</h2>
+  </div>
+  <div class="two-col">
+    <div class="reveal">
+      <div class="edu-item">
+        <div class="deg">M.Sc., Computer Information Science</div>
+        <div class="sch">Harrisburg University - Harrisburg, PA</div>
+        <div class="meta">Software Engineering Concentration · GPA 3.91 / 4.0 · Oct 2025</div>
+        <div class="extra"><b style="color:var(--text)">Thesis:</b> Mitigating Bias and Ensuring Fairness in Machine Learning Models Trained on Big Data.<br><b style="color:var(--text)">Coursework:</b> Network Security, Cloud Computing, AI &amp; Machine Learning, Discrete Structures.</div>
+      </div>
+      <div class="edu-item">
+        <div class="deg">B.Sc., Computer Science</div>
+        <div class="sch">KolaDaisi University - Ibadan, Oyo</div>
+        <div class="meta">GPA 4.05 / 5.0 · Nov 2021</div>
+        <div class="extra"><b style="color:var(--text)">Coursework:</b> System Administration, Software Engineering, Database Management, Cybersecurity.</div>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="cert-row"><i class="fa-solid fa-award"></i><span>CompTIA A+</span></div>
+      <div class="cert-row"><i class="fa-solid fa-award"></i><span>Alison IT Support Diploma</span></div>
+      <div class="cert-row"><i class="fa-solid fa-award"></i><span>Prompt Engineering</span></div>
+      <div class="cert-row"><i class="fa-solid fa-award"></i><span>Agile Essentials</span></div>
+      <div class="about-card" style="margin-top:18px">
+        <h4><i class="fa-solid fa-star"></i> Core Competencies</h4>
+        <div class="chips">
+          <span class="chip">AI Model Training &amp; Evaluation</span><span class="chip">Customer Success Engineering</span><span class="chip">Statistical Analysis</span><span class="chip">Data Analysis</span><span class="chip">Cloud Computing</span><span class="chip">Technical Support</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="wrap">
+  <div class="contact reveal">
+    <h2>Let's build something reliable.</h2>
+    <p>Open to AI Operations, Support Engineering, and Automation roles.</p>
+    <div class="contact-methods">
+      <a class="cmethod" href="mailto:iokeniyi547@gmail.com"><i class="fa-solid fa-envelope"></i> iokeniyi547@gmail.com</a>
+      <a class="cmethod" href="tel:3177759132"><i class="fa-solid fa-phone"></i> 317.775.9132</a>
+      <a class="cmethod" href="https://linkedin.com/in/okeniyi-olajuwon" target="_blank"><i class="fa-brands fa-linkedin"></i> linkedin.com/in/okeniyi-olajuwon</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="mono">© 2026 Olajuwon Okeniyi, MSc - AI Operations &amp; Support Engineer</div>
+</footer>
+
+<script>
+// Reveal on scroll
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// Animated counters
+function animateCount(el){
+  const target=+el.dataset.count, suffix=el.dataset.suffix||'';
+  const dur=1400, start=performance.now();
+  function tick(now){
+    const p=Math.min((now-start)/dur,1);
+    const eased=1-Math.pow(1-p,3);
+    el.textContent=Math.round(target*eased)+suffix;
+    if(p<1)requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+const cio=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ animateCount(e.target); cio.unobserve(e.target);} });
+},{threshold:.5});
+document.querySelectorAll('.num').forEach(el=>cio.observe(el));
+</script>
+
+
+</body></html>
