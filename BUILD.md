@@ -33,7 +33,7 @@ Optional (for staging via Netlify):
 1. Create a new repo on GitHub (don't initialize with README)
 2. Clone and push:
    ```bash
-   git clone https://github.com/alexchen/portfolio-auto-deploy.git
+   git clone https://github.com/OlajuwonOkeniyi/portfolio-auto-deploy.git
    cd portfolio-auto-deploy
    git remote set-url origin https://github.com/YOUR-USERNAME/portfolio-auto-deploy.git
    git push -u origin main
@@ -81,7 +81,7 @@ Go to **Settings → Secrets and variables → Actions**.
 
 | Secret | Purpose |
 |--------|---------|
-| `CUSTOM_DOMAIN` | If you own a domain (e.g., `alexchen.dev`), set it here. The deploy action will create a CNAME file. |
+| `CUSTOM_DOMAIN` | If you own a domain (e.g., `yourdomain.dev`), set it here. The deploy action will create a CNAME file. |
 | `NETLIFY_AUTH_TOKEN` | If using Netlify for staging previews instead of a GitHub Pages staging branch. |
 
 ---

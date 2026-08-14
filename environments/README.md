@@ -20,7 +20,7 @@ Option 3: Clone the branch locally and open `index.html`.
 
 - **Branch:** `gh-pages`
 - **Purpose:** The live site visitors see
-- **URL:** `https://<username>.github.io/portfolio-auto-deploy/`
+- **URL:** `https://<your-username>.github.io/portfolio-auto-deploy/`
 - **Protection:** Optional — can add required reviewers in GitHub environment settings
 - **Lifetime:** Persists until next deploy or rollback
 
@@ -43,7 +43,7 @@ Secrets are set at the repository level (Settings → Secrets and variables → 
 | Secret | Environment | Purpose |
 |--------|-------------|---------|
 | `GITHUB_TOKEN` | Both | Automatically provided by GitHub Actions |
-| `CUSTOM_DOMAIN` | Production | Optional — your custom domain (e.g., `alexchen.dev`) |
+| `CUSTOM_DOMAIN` | Production | Optional — your custom domain (e.g., `yourdomain.dev`) |
 
 ### Why not environment-specific secrets?
 
