@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Software developer portfolio — building things that work.">
+    <title>Alex Chen — Developer</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Inline SVG favicon — no external file needed, works immediately on all environments -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+</head>
+<body>
+    <main class="container">
+
+        <!-- ═══ HERO SECTION ═══════════════════════════════════════════════
+             Primary introduction — name, title, and one-liner pitch.
+             Kept minimal: no photo, no animation, just text. Loads fast. -->
+        <header class="hero">
+            <div class="hero-content">
+                <h1>Alex Chen</h1>
+                <p class="title">Software Developer</p>
+                <p class="tagline">I build reliable systems and clean interfaces.<br>Currently focused on cloud infrastructure and developer tooling.</p>
+            </div>
+        </header>
+
+        <!-- ═══ SOCIAL LINKS ══════════════════════════════════════════════
+             Quick-access cards to external profiles.
+             Uses aria-labels for accessibility (screen readers announce the
+             destination, not just "link"). -->
+        <section class="links">
+            <a href="https://github.com/alexchen" class="link-card" aria-label="GitHub profile">
+                <span class="link-icon">&#9679;</span>
+                <span class="link-text">GitHub</span>
+            </a>
+            <a href="https://linkedin.com/in/alexchen" class="link-card" aria-label="LinkedIn profile">
+                <span class="link-icon">&#9679;</span>
+                <span class="link-text">LinkedIn</span>
+            </a>
+            <a href="mailto:alex@example.com" class="link-card" aria-label="Send email">
+                <span class="link-icon">&#9679;</span>
+                <span class="link-text">Email</span>
+            </a>
+        </section>
+
+        <!-- ═══ PROJECTS SECTION ══════════════════════════════════════════
+             Highlight 2-3 recent projects. Keep descriptions short — the
+             reader should get the gist in one line, then click through
+             to the repo for details. -->
+        <section class="projects">
+            <h2>Recent Work</h2>
+            <ul class="project-list">
+                <li>
+                    <strong>Portfolio Auto-Deploy</strong>
+                    <span class="project-desc">— CI/CD pipeline for this site (you're looking at it)</span>
+                </li>
+                <li>
+                    <strong>Config Drift Monitor</strong>
+                    <span class="project-desc">— Detects infrastructure drift across environments</span>
+                </li>
+                <li>
+                    <strong>API Gateway Template</strong>
+                    <span class="project-desc">— Reusable gateway pattern with rate limiting and auth</span>
+                </li>
+            </ul>
+        </section>
+
+        <!-- ═══ FOOTER ════════════════════════════════════════════════════
+             Links back to the pipeline repo (meta/self-referential) and
+             shows the current deploy version for quick debugging. -->
+        <footer class="footer">
+            <p>Deployed automatically via <a href="https://github.com/alexchen/portfolio-auto-deploy">GitHub Actions</a>.</p>
+            <p class="version">Last deploy: <span id="deploy-version">v2024.03.15.1</span></p>
+        </footer>
+
+    </main>
+</body>
+</html>

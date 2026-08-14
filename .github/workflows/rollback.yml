@@ -1,0 +1,167 @@
+# =============================================================================
+# Rollback Workflow
+# =============================================================================
+#
+# PURPOSE:
+# Emergency rollback mechanism. When a deploy breaks something (broken layout,
+# missing assets, wrong content), this workflow lets you revert production to
+# any previous tagged version in under 60 seconds.
+#
+# HOW IT WORKS:
+# 1. You trigger this manually from the Actions tab
+# 2. You provide the tag to roll back to (e.g., v2024.03.15.1)
+# 3. It validates the tag exists, checks out that version's code, and
+#    force-deploys it to the gh-pages branch (overwriting current production)
+# 4. It logs the rollback event for audit trail
+#
+# IMPORTANT:
+# This does NOT revert the main branch. Main still has the newer (broken) code.
+# After rolling back, you should fix the issue on main and push a normal deploy.
+# Think of this as "serve the old version while I fix the new one."
+#
+# TRIGGER: Manual only (workflow_dispatch) — you never want this running
+# automatically. Rollbacks are a human decision.
+# =============================================================================
+
+name: Rollback Deploy
+
+on:
+  # Manual trigger with user-provided inputs.
+  # workflow_dispatch creates a "Run workflow" button in the Actions UI
+  # with form fields for the inputs below.
+  workflow_dispatch:
+    inputs:
+      tag_version:
+        description: 'Tag to roll back to (e.g., v2024.03.15.1)'
+        required: true
+        type: string
+      reason:
+        description: 'Reason for rollback (logged for audit trail)'
+        required: false
+        default: 'Manual rollback — issue with latest deploy'
+        type: string
+
+# Permissions: write access to contents (for committing the rollback log)
+# and pages (for deploying to gh-pages).
+permissions:
+  contents: write
+  pages: write
+
+jobs:
+  rollback:
+    name: Rollback to ${{ inputs.tag_version }}
+    runs-on: ubuntu-latest
+
+    # Uses the production environment so the same protection rules apply.
+    # If you have required reviewers on production, someone still needs to
+    # approve the rollback — which is the right behavior for prod changes.
+    environment:
+      name: production
+      url: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+
+    steps:
+      # ─── STEP 1: INPUT VALIDATION ───────────────────────────────────────
+      # Validate the tag format BEFORE doing anything else.
+      # We expect vYYYY.MM.DD.N — reject anything that doesn't match.
+      # This prevents typos from causing confusing downstream failures.
+      - name: Validate tag format
+        run: |
+          TAG="${{ inputs.tag_version }}"
+          if [[ ! "$TAG" =~ ^v[0-9]{4}\.[0-9]{2}\.[0-9]{2}\.[0-9]+$ ]]; then
+            echo "❌ Invalid tag format: ${TAG}"
+            echo "   Expected format: vYYYY.MM.DD.N (e.g., v2024.03.15.1)"
+            exit 1
+          fi
+          echo "✅ Tag format valid: ${TAG}"
+
+      # ─── STEP 2: CHECKOUT FULL HISTORY ──────────────────────────────────
+      # We need fetch-depth: 0 (full clone) because:
+      # - We need to verify the tag exists in the repo
+      # - We need to checkout that specific tag's code
+      # - We need to push a log update back to main
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # ─── STEP 3: VERIFY TAG EXISTS ─────────────────────────────────────
+      # The tag might be correctly formatted but not exist (typo in the date,
+      # or build number that was never created). Check before proceeding.
+      # On failure, show the 20 most recent tags to help the user pick the right one.
+      - name: Verify tag exists
+        run: |
+          if ! git rev-parse "${{ inputs.tag_version }}" >/dev/null 2>&1; then
+            echo "❌ Tag '${{ inputs.tag_version }}' not found in repository"
+            echo ""
+            echo "Available tags:"
+            git tag --list 'v*' --sort=-version:refname | head -20
+            exit 1
+          fi
+          echo "✅ Tag exists: ${{ inputs.tag_version }}"
+
+      # ─── STEP 4: CHECKOUT THE TARGET VERSION ───────────────────────────
+      # Switch to the tagged commit. After this, the working directory
+      # contains exactly what was deployed at that version — including
+      # the site/ folder we'll re-deploy.
+      - name: Checkout target tag
+        run: |
+          git checkout "${{ inputs.tag_version }}"
+          echo "📌 Checked out: ${{ inputs.tag_version }}"
+          echo "   Commit: $(git rev-parse HEAD)"
+          echo "   Date: $(git log -1 --format='%ci')"
+
+      # ─── STEP 5: DEPLOY OLD VERSION TO PRODUCTION ──────────────────────
+      # Force-push the old version's site/ contents to gh-pages.
+      # This overwrites whatever is currently live. The commit message
+      # clearly marks this as a rollback and records what SHA was replaced.
+      - name: Deploy tag to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+          publish_branch: gh-pages
+          commit_message: "rollback: deploy ${{ inputs.tag_version }} (was: ${{ github.sha }})"
+
+      # ─── STEP 6: LOG THE ROLLBACK EVENT ────────────────────────────────
+      # Switch back to main to update the deploy log. This creates an
+      # audit record showing who rolled back, when, to what version, and why.
+      # The [skip ci] in the commit message prevents this log update from
+      # triggering a new deploy (which would overwrite our rollback!).
+      - name: Log rollback event
+        run: |
+          # Switch back to main branch to update the log file
+          git checkout main
+
+          TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M:%S')
+          TAG="${{ inputs.tag_version }}"
+          TAG_SHA=$(git rev-parse "${TAG}" | cut -c1-7)
+          ACTOR="${{ github.actor }}"
+          REASON="${{ inputs.reason }}"
+
+          # Append rollback entry to deploy log (same table format as normal deploys)
+          echo "| ${TIMESTAMP} | ${TAG} (rollback) | \`${TAG_SHA}\` | ${ACTOR} (manual) | ⏪ rollback |" >> deploy_log.md
+
+          # Commit and push the log update
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add deploy_log.md
+          git commit -m "docs: log rollback to ${TAG} [skip ci] - Reason: ${REASON}"
+          git push origin main
+
+      # ─── STEP 7: SUMMARY ───────────────────────────────────────────────
+      # Clear confirmation of what happened, plus a reminder about next steps.
+      # The warning about main branch is important — people forget that
+      # rollback doesn't fix the underlying issue, it just buys you time.
+      - name: Rollback complete
+        run: |
+          echo "⏪ Rollback complete!"
+          echo ""
+          echo "   Rolled back to: ${{ inputs.tag_version }}"
+          echo "   Reason: ${{ inputs.reason }}"
+          echo "   Triggered by: ${{ github.actor }}"
+          echo ""
+          echo "   Site is now serving the content from ${{ inputs.tag_version }}"
+          echo "   URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+          echo ""
+          echo "   ⚠️  Remember: main branch still has newer code."
+          echo "   Fix the issue on main, then push to trigger a new deploy."

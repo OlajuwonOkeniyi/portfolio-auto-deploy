@@ -1,0 +1,335 @@
+# =============================================================================
+# Portfolio Auto-Deploy Pipeline
+# =============================================================================
+#
+# Author: Alex Chen
+# Reviewed by: Kevin Miles (SDE III)
+#
+# PURPOSE:
+# This workflow implements a gated deployment pipeline for a static portfolio
+# site. It enforces a strict progression: validate → stage → deploy → tag.
+# No code reaches production without passing automated quality gates first.
+#
+# ARCHITECTURE DECISION:
+# We chose a linear job chain (not parallel) because each stage genuinely
+# depends on the previous one. Staging must succeed before prod deploy, and
+# we tag only after prod is confirmed live. This mirrors the "pipeline" pattern
+# used in production services at scale.
+#
+# FLOW:
+#   push to main → validate HTML/links → deploy staging preview
+#                → deploy production (gh-pages) → tag release
+#
+# =============================================================================
+
+name: Deploy Pipeline
+
+# --- TRIGGER CONFIGURATION ---
+# We trigger on push to main, but ONLY when relevant files change.
+# This avoids unnecessary deploys when you're just editing docs or configs.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/**'               # Any change to site content triggers a deploy
+      - 'scripts/**'            # Script changes could affect validation logic
+      - '.github/workflows/deploy.yml'  # Workflow changes should self-test
+
+  # Allow manual trigger for re-deploys without code changes.
+  # Useful when GitHub Pages has an outage and you need to re-push,
+  # or when you want to force a fresh deploy after fixing an environment issue.
+  workflow_dispatch:
+
+# --- CONCURRENCY CONTROL ---
+# Only one deploy can run at a time. If you push twice quickly, the first
+# in-progress run gets cancelled. This prevents race conditions where two
+# deploys try to write to gh-pages simultaneously, which can corrupt the branch.
+concurrency:
+  group: deploy-pipeline
+  cancel-in-progress: true
+
+# --- PERMISSIONS ---
+# Principle of least privilege: we request only what's needed.
+# - contents:write — push tags and update deploy_log.md on main
+# - pages:write — deploy to GitHub Pages
+# - id-token:write — required by GitHub Pages deployment action (OIDC auth)
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+# --- GLOBAL ENVIRONMENT ---
+# Centralize the site directory so all jobs reference the same path.
+# Change this if you restructure the repo (e.g., move site to "public/").
+env:
+  SITE_DIR: site
+
+jobs:
+  # ═══════════════════════════════════════════════════════════════════════════
+  # JOB 1: VALIDATE
+  # ═══════════════════════════════════════════════════════════════════════════
+  # WHY: Catch broken HTML and dead links before they reach any environment.
+  # This is the cheapest possible quality gate — runs in ~10s and prevents
+  # embarrassing broken deploys (404 links, malformed markup, etc.)
+  validate:
+    name: Validate HTML & Links
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the repo so we have access to site/ and scripts/
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Install OS-level tools for validation.
+      # - tidy: W3C HTML validator (catches malformed tags, missing attrs)
+      # - curl: needed by check_links.sh for external URL verification
+      # Using -qq flags to suppress apt noise in CI logs.
+      - name: Install validation tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq tidy curl
+
+      # Git doesn't preserve file permissions on checkout, so scripts
+      # may lose their executable bit. Ensure they're runnable.
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh
+
+      # Validate HTML structure. This catches things like unclosed tags,
+      # missing alt attributes, and invalid nesting. See scripts/validate_html.sh
+      # for the full logic — it uses tidy's exit codes to distinguish
+      # warnings (non-blocking) from errors (blocking).
+      - name: Run HTML validation
+        run: ./scripts/validate_html.sh
+
+      # Verify all links (local file refs + external URLs) are reachable.
+      # External timeouts are treated as warnings, not failures, because
+      # we don't want third-party outages to block our deploys.
+      - name: Run link checker
+        run: ./scripts/check_links.sh
+
+      # Explicit success message makes the Actions UI easier to scan at a glance.
+      - name: Validation passed
+        run: echo "✅ All validation checks passed. Safe to deploy."
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # JOB 2: DEPLOY TO STAGING
+  # ═══════════════════════════════════════════════════════════════════════════
+  # WHY: Staging gives you a preview URL to eyeball before going live.
+  # This deploys to a separate branch (gh-pages-staging) so it doesn't
+  # interfere with production. In a real setup, you might use Netlify deploy
+  # previews or an S3 bucket here instead.
+  #
+  # GATE: Only runs after validate succeeds (needs: validate).
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: validate  # Won't run if validation fails — this is the gate
+
+    # GitHub Environment integration gives you:
+    # 1. A clickable "View deployment" link in the Actions UI
+    # 2. Environment protection rules (optional — add manual approval if desired)
+    # 3. Environment-specific secrets (e.g., NETLIFY_AUTH_TOKEN for staging)
+    environment:
+      name: staging
+      url: ${{ steps.deploy.outputs.staging_url }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Deploy site content to a staging-specific branch.
+      # Using peaceiris/actions-gh-pages because it handles the force-push
+      # to an orphan branch cleanly — no merge conflicts, no history bloat.
+      - name: Deploy to staging branch
+        id: deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./${{ env.SITE_DIR }}
+          publish_branch: gh-pages-staging  # Separate branch from production
+          commit_message: "staging: deploy preview from ${{ github.sha }}"
+
+      # Construct the staging preview URL for the environment link.
+      # Note: GitHub Pages serves from /{repo-name}/ for project pages.
+      - name: Set staging URL output
+        run: |
+          REPO_NAME="${{ github.event.repository.name }}"
+          OWNER="${{ github.repository_owner }}"
+          echo "staging_url=https://${OWNER}.github.io/${REPO_NAME}/" >> "$GITHUB_OUTPUT"
+          echo "📋 Staging deployed. Preview at: https://${OWNER}.github.io/${REPO_NAME}/"
+
+      # Summary output for quick visual confirmation in the Actions log.
+      - name: Staging deploy complete
+        run: |
+          echo "✅ Staging deploy successful"
+          echo "   Branch: gh-pages-staging"
+          echo "   Commit: ${{ github.sha }}"
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # JOB 3: DEPLOY TO PRODUCTION
+  # ═══════════════════════════════════════════════════════════════════════════
+  # WHY: This is the real deploy — pushes to gh-pages which GitHub Pages
+  # serves to the public internet.
+  #
+  # GATE: Requires BOTH validate AND deploy-staging to succeed.
+  # This double-gate means a staging failure (e.g., action error, permissions
+  # issue) also blocks production, which is the safe default.
+  deploy-prod:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [validate, deploy-staging]  # Both must pass — defense in depth
+
+    # Production environment can have stricter protection rules:
+    # - Required reviewers (manual approval before deploy)
+    # - Wait timer (deploy delay for canary observation)
+    # Configure these in: Settings → Environments → production
+    environment:
+      name: production
+      url: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+
+    steps:
+      # fetch-depth: 0 gives us full git history. We need this because
+      # the "Update deploy log" step commits back to main, which requires
+      # the branch to exist locally with history.
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history — needed for commit-back to main
+
+      # Deploy to the gh-pages branch that GitHub Pages actually serves.
+      # The CNAME option supports custom domains — leave the secret empty
+      # if you're using the default github.io URL.
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./${{ env.SITE_DIR }}
+          publish_branch: gh-pages           # This is what GitHub Pages serves
+          commit_message: "prod: deploy ${{ github.sha }}"
+          cname: ${{ secrets.CUSTOM_DOMAIN }} # Optional: set in repo secrets if using custom domain
+
+      # Append a deploy record to deploy_log.md for audit trail.
+      # This gives you a quick way to correlate "when did this go live?"
+      # with a specific commit SHA, without digging through Actions history.
+      - name: Update deploy log
+        run: |
+          TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M:%S')
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          TRIGGER="${{ github.event_name }}"
+
+          # Append a markdown table row to the deploy log
+          echo "| ${TIMESTAMP} | pending-tag | \`${SHORT_SHA}\` | ${TRIGGER} | ✅ success |" >> deploy_log.md
+
+          echo "📝 Deploy log updated"
+          echo "   Time: ${TIMESTAMP} UTC"
+          echo "   SHA: ${SHORT_SHA}"
+
+      # Commit the deploy log update back to main.
+      # [skip ci] in the message prevents this commit from triggering
+      # another pipeline run — without it, you'd get infinite loops.
+      - name: Commit deploy log
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add deploy_log.md
+          # Only commit if there are actual changes (git diff --cached --quiet
+          # exits non-zero if there are staged changes)
+          git diff --cached --quiet || git commit -m "docs: update deploy log [skip ci]"
+          git push origin main
+
+      - name: Production deploy complete
+        run: |
+          echo "✅ Production deploy successful"
+          echo "   URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+          echo "   Commit: ${{ github.sha }}"
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # JOB 4: TAG & RELEASE
+  # ═══════════════════════════════════════════════════════════════════════════
+  # WHY: Every production deploy gets a unique version tag. This serves
+  # three purposes:
+  # 1. Rollback target — you can deploy any previous tag via rollback.yml
+  # 2. Audit trail — `git tag` shows exactly what was live and when
+  # 3. Release notes — GitHub Releases page becomes a deploy history
+  #
+  # VERSIONING SCHEME: vYYYY.MM.DD.N (date-based with build number)
+  # This is simpler than semver for a portfolio site — you don't have
+  # "breaking changes" in a static site, so date-based makes more sense.
+  tag-release:
+    name: Tag & Release
+    runs-on: ubuntu-latest
+    needs: deploy-prod  # Only tag after production deploy is confirmed
+
+    steps:
+      # Need full history to list existing tags and determine build number.
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history — required for tag listing
+
+      # Generate a unique version tag based on today's date.
+      # If multiple deploys happen on the same day, the build number increments:
+      # v2024.03.15.1, v2024.03.15.2, v2024.03.15.3, etc.
+      - name: Generate version tag
+        id: version
+        run: |
+          # Date-based semantic version: vYYYY.MM.DD.N
+          TODAY=$(date -u '+%Y.%m.%d')
+          PREFIX="v${TODAY}"
+
+          # Find existing tags for today and increment build number.
+          # sort -V does version-aware sorting (handles multi-digit numbers correctly).
+          EXISTING=$(git tag --list "${PREFIX}.*" | sort -V | tail -1)
+          if [ -z "$EXISTING" ]; then
+            BUILD_NUM=1
+          else
+            # Extract the last segment (build number) and increment
+            LAST_NUM=$(echo "$EXISTING" | rev | cut -d'.' -f1 | rev)
+            BUILD_NUM=$((LAST_NUM + 1))
+          fi
+
+          VERSION="${PREFIX}.${BUILD_NUM}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "📦 Version: ${VERSION}"
+
+      # Create an annotated tag (not lightweight) so it carries metadata:
+      # who created it, when, and what commit it points to.
+      - name: Create git tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "${{ steps.version.outputs.version }}" -m "Release ${{ steps.version.outputs.version }} — deployed from ${{ github.sha }}"
+          git push origin "${{ steps.version.outputs.version }}"
+
+      # Create a GitHub Release from the tag. This populates the "Releases"
+      # page in your repo with a nicely formatted entry including:
+      # - Deploy metadata (version, commit, timestamp, actor)
+      # - The commit message as a changelog summary
+      # - Auto-generated release notes (diff since last tag)
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: ${{ steps.version.outputs.version }}
+          body: |
+            ## Deployment
+
+            - **Version**: ${{ steps.version.outputs.version }}
+            - **Commit**: ${{ github.sha }}
+            - **Deployed**: ${{ github.event.head_commit.timestamp }}
+            - **Triggered by**: ${{ github.actor }}
+
+            ### Changes
+
+            ${{ github.event.head_commit.message }}
+          generate_release_notes: true  # Appends auto-generated diff summary
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Final summary — confirms the entire pipeline completed successfully.
+      # The arrow chain makes it immediately obvious what happened at a glance.
+      - name: Pipeline complete
+        run: |
+          echo "🎉 Full pipeline complete!"
+          echo "   Validated ✅ → Staged ✅ → Deployed ✅ → Tagged ✅"
+          echo "   Version: ${{ steps.version.outputs.version }}"
+          echo "   Live at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
