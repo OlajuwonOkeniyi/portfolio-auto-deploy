@@ -1,0 +1,198 @@
+/* =============================================================================
+   Portfolio Styles — Dark theme, minimal, professional
+   =============================================================================
+   Design system: GitHub-dark inspired palette with constrained typography.
+   Everything fits in a single 640px column — no grid framework needed.
+   ============================================================================= */
+
+/* ─── DESIGN TOKENS ──────────────────────────────────────────────────────────
+   All colors, spacing, and sizing controlled via custom properties.
+   To theme this site: change the values here, everything cascades. */
+:root {
+    --bg: #0d1117;              /* Page background — near-black for contrast */
+    --surface: #161b22;         /* Card/component background — slight elevation */
+    --border: #30363d;          /* Subtle dividers — visible but not distracting */
+    --text-primary: #e6edf3;    /* Main body text — high contrast on dark bg */
+    --text-secondary: #8b949e;  /* Secondary/muted text — descriptions, captions */
+    --accent: #58a6ff;          /* Interactive elements — links, highlights */
+    --accent-hover: #79c0ff;    /* Hover state for accent — slightly brighter */
+    --radius: 8px;              /* Consistent corner rounding across components */
+    --max-width: 640px;         /* Content column width — optimal reading length */
+}
+
+/* ─── RESET ──────────────────────────────────────────────────────────────────
+   Minimal reset: normalize box model and remove default margins.
+   Not using a full reset (normalize.css) — overkill for a single-page site. */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* ─── BASE TYPOGRAPHY & LAYOUT ───────────────────────────────────────────────
+   System font stack for fast rendering (no web font download).
+   Flexbox centering keeps the content column in the middle of the viewport. */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+    background-color: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    -webkit-font-smoothing: antialiased;  /* Crisper text on macOS */
+}
+
+/* ─── CONTENT CONTAINER ──────────────────────────────────────────────────────
+   Single column, max-width constrained. No CSS grid needed for this layout. */
+.container {
+    max-width: var(--max-width);
+    width: 100%;
+}
+
+/* ─── HERO / HEADER ──────────────────────────────────────────────────────────
+   Top section: name, title, tagline. The border-bottom creates visual
+   separation from the link cards below. */
+.hero {
+    padding: 3rem 0 2.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+}
+
+.hero h1 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;   /* Tighten tracking at large sizes */
+    margin-bottom: 0.25rem;
+}
+
+.title {
+    font-size: 1.1rem;
+    color: var(--accent);      /* Accent color draws the eye to role/title */
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.tagline {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.7;          /* Slightly more leading for readability */
+}
+
+/* ─── SOCIAL LINK CARDS ──────────────────────────────────────────────────────
+   Horizontal row of clickable cards. Flex-wrap ensures they stack on mobile.
+   Subtle hover effect: border highlights on accent color. */
+.links {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;            /* Wraps to column on narrow viewports */
+}
+
+.link-card {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.link-card:hover {
+    border-color: var(--accent);
+    background: rgba(88, 166, 255, 0.05);  /* Very subtle blue tint on hover */
+}
+
+.link-icon {
+    color: var(--accent);
+    font-size: 0.5rem;         /* Small dot indicator beside link text */
+}
+
+/* ─── PROJECTS LIST ──────────────────────────────────────────────────────────
+   Vertical stack of project cards. Each card has a name (bold) and a
+   one-line description (muted). No links here — keeps it clean. */
+.projects {
+    margin-bottom: 3rem;
+}
+
+.projects h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;    /* Wide tracking for small-caps section headers */
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.project-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.project-list li {
+    padding: 0.75rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 0.95rem;
+}
+
+.project-list li strong {
+    color: var(--text-primary);
+}
+
+.project-desc {
+    color: var(--text-secondary);
+}
+
+/* ─── FOOTER ─────────────────────────────────────────────────────────────────
+   Minimal footer with deploy info. The version string uses a monospace font
+   so it reads like a terminal/build output. */
+.footer {
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.footer a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+.version {
+    margin-top: 0.25rem;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.8rem;
+    opacity: 0.7;              /* De-emphasize — it's metadata, not content */
+}
+
+/* ─── RESPONSIVE / MOBILE ────────────────────────────────────────────────────
+   Single breakpoint at 480px. On narrow screens:
+   - Reduce heading size to prevent overflow
+   - Stack link cards vertically for easier tap targets */
+@media (max-width: 480px) {
+    .hero h1 {
+        font-size: 1.75rem;
+    }
+
+    .links {
+        flex-direction: column;
+    }
+
+    .link-card {
+        justify-content: center;
+    }
+}
