@@ -40,6 +40,17 @@ ERRORS_FOUND=0
 echo "🔍 Validating HTML files in ${SITE_DIR}/"
 echo "───────────────────────────────────────"
 
+# BUG FIX: guard on the validator itself being present.
+# Without this check, `TIDY_OUTPUT=$(tidy ...)` exits 127 ("command not found").
+# 127 is neither 1 (warnings) nor 2 (errors), so every file fell through to the
+# final `else` and was reported "✅ Valid" — the gate passed while validating
+# nothing at all. A quality gate that cannot run must fail, not pass.
+if ! command -v tidy >/dev/null 2>&1; then
+    echo "❌ 'tidy' is not installed — cannot validate HTML."
+    echo "   Install it with: sudo apt-get install -y tidy"
+    exit 1
+fi
+
 # Recursively find all HTML files. Using -type f ensures we skip directories
 # that happen to end in .html (unlikely but defensive).
 HTML_FILES=$(find "$SITE_DIR" -name "*.html" -type f)
@@ -64,8 +75,14 @@ for file in $HTML_FILES; do
     # We capture stderr (where tidy writes diagnostics) into TIDY_OUTPUT.
     # The "|| TIDY_EXIT=$?" pattern captures the exit code without triggering
     # set -e (which would abort the script on non-zero exit).
+    #
+    # BUG FIX: reset TIDY_EXIT at the top of every iteration.
+    # The old code relied on `TIDY_EXIT=${TIDY_EXIT:-0}`, but `:-` only
+    # substitutes when the variable is *unset*. Once any file failed, TIDY_EXIT
+    # stayed set to 2, and `|| TIDY_EXIT=$?` never fires on success — so every
+    # subsequent clean file inherited the stale 2 and was reported as broken.
+    TIDY_EXIT=0
     TIDY_OUTPUT=$(tidy -errors -quiet "$file" 2>&1) || TIDY_EXIT=$?
-    TIDY_EXIT=${TIDY_EXIT:-0}
 
     if [ "$TIDY_EXIT" -eq 2 ]; then
         # ERRORS: Malformed HTML that browsers may render incorrectly.
@@ -82,6 +99,13 @@ for file in $HTML_FILES; do
         if [ "$WARN_COUNT" -gt 5 ]; then
             echo "     ... and $((WARN_COUNT - 5)) more warnings"
         fi
+    elif [ "$TIDY_EXIT" -gt 2 ]; then
+        # Anything above 2 means tidy itself failed to run properly (bad flags,
+        # unreadable file, killed process). Treat it as a blocking failure
+        # rather than silently assuming the file is fine.
+        echo "  ❌ tidy exited unexpectedly (code ${TIDY_EXIT}):"
+        echo "$TIDY_OUTPUT" | sed 's/^/     /'
+        ERRORS_FOUND=1
     else
         # Clean pass — no issues at all.
         echo "  ✅ Valid"
