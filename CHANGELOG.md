@@ -23,6 +23,17 @@ This project was built in August 2026. Every entry below corresponds to a real c
 
 - Replaced template placeholder attribution and example identifiers throughout the docs with the real author and repository.
 - `LICENSE` copyright now names the actual author and year.
+- Every worked example now uses this repository's real tag (`v2026.08.14.1`) instead of a placeholder dated March 2024 — 26 occurrences across the README, the docs and both workflows.
+- README Quick Start rewritten as "How It's Set Up": a record of the GitHub Pages source, environments and secrets actually configured here, rather than fork-this-repo instructions addressed to a stranger.
+- README staging section now states the real constraint — a Pages project site serves one branch at a time, so `gh-pages-staging` has no public URL and the value of the stage is the gate, not the preview.
+- `docs/PIPELINE.md` design rationale rewritten to argue from how the pipeline is actually built (`needs:` ordering) rather than from invented project history.
+- README "What Building This Surfaced" trimmed from seven items to the four with a silent-failure mode; the rest stay documented here.
+- Corrected "date-based semver" (it is date-based versioning, not semver) and the claim that `deploy_log.md` records a deployer (it records the trigger event).
+
+### Removed
+
+- `BUILD.md` — a 250-line "get this running on your own GitHub account" tutorial. This repository is the deployment pipeline for one live site, not a distributable starter kit; the configuration it described is now recorded in the README and `environments/README.md`.
+- `site/assets/` and its placeholder README — the directory was empty and unreferenced by `index.html`.
 
 ---
 

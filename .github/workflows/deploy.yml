@@ -278,7 +278,7 @@ jobs:
 
       # Generate a unique version tag based on today's date.
       # If multiple deploys happen on the same day, the build number increments:
-      # v2024.03.15.1, v2024.03.15.2, v2024.03.15.3, etc.
+      # v2026.08.14.1, v2026.08.14.2, v2026.08.14.3, etc.
       - name: Generate version tag
         id: version
         run: |

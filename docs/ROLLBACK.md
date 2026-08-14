@@ -1,6 +1,6 @@
 # Rollback Procedure
 
-How to roll back a bad deploy. Should take under 60 seconds.
+How to roll back a bad deploy to any previously tagged version.
 
 ## Decision Tree
 
@@ -25,11 +25,11 @@ Something's wrong with the live site
 4. Click the **"Run workflow"** button (top right)
 5. Enter the tag to roll back to:
    - Find recent tags: look at the releases page or `deploy_log.md`
-   - Format: `v2024.03.15.1`
+   - Format: `v2026.08.14.1`
 6. Optionally enter a reason (for the audit log)
 7. Click **"Run workflow"**
 
-The site will be reverted within ~60 seconds.
+The workflow redeploys that tag's `site/` directory to `gh-pages`; GitHub Pages picks up the change on its next build.
 
 ## Rollback via CLI
 
@@ -39,7 +39,7 @@ git tag --list 'v*' --sort=-version:refname | head -10
 
 # Trigger the rollback
 gh workflow run rollback.yml \
-  -f tag_version=v2024.03.15.1 \
+  -f tag_version=v2026.08.14.1 \
   -f reason="Broken CSS on mobile"
 
 # Watch it run
@@ -89,7 +89,7 @@ If Actions is down or the workflow won't trigger:
 
 ```bash
 # Check out the tag locally
-git checkout v2024.03.15.1
+git checkout v2026.08.14.1
 
 # Force-push site/ contents to gh-pages
 git subtree push --prefix site origin gh-pages
@@ -98,7 +98,7 @@ git subtree push --prefix site origin gh-pages
 cd site
 git init
 git add .
-git commit -m "emergency rollback to v2024.03.15.1"
+git commit -m "emergency rollback to v2026.08.14.1"
 git push -f origin HEAD:gh-pages
 cd ..
 rm -rf site/.git

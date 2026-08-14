@@ -20,7 +20,7 @@ Option 3: Clone the branch locally and open `index.html`.
 
 - **Branch:** `gh-pages`
 - **Purpose:** The live site visitors see
-- **URL:** `https://<your-username>.github.io/portfolio-auto-deploy/`
+- **URL:** https://olajuwonokeniyi.github.io/portfolio-auto-deploy/
 - **Protection:** Optional — can add required reviewers in GitHub environment settings
 - **Lifetime:** Persists until next deploy or rollback
 
