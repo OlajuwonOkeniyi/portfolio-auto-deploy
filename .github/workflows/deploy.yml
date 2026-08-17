@@ -184,6 +184,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: [validate, deploy-staging]  # Both must pass — defense in depth
 
+    # The version is computed in this job, not in tag-release, because the deploy
+    # log is written here. Computing it downstream meant the log could only ever
+    # record a placeholder. Published as a job output so tag-release uses this
+    # value rather than deriving its own.
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+
     # Production environment can have stricter protection rules:
     # - Required reviewers (manual approval before deploy)
     # - Wait timer (deploy delay for canary observation)
@@ -213,24 +220,47 @@ jobs:
           commit_message: "prod: deploy ${{ github.sha }}"
           cname: ${{ secrets.CUSTOM_DOMAIN }} # Optional: set in repo secrets if using custom domain
 
-      # Append a deploy record to deploy_log.md for audit trail.
-      # This gives you a quick way to correlate "when did this go live?"
-      # with a specific commit SHA, without digging through Actions history.
+      # Compute the version BEFORE the log row is written. This used to live in
+      # tag-release, which runs after this job, so the row was written with the
+      # literal string "pending-tag" and nothing ever went back to replace it —
+      # the Version column could not contain a version. The checkout above uses
+      # fetch-depth: 0, so the tag list this reads is complete.
+      - name: Generate version tag
+        id: version
+        run: |
+          TODAY=$(date -u '+%Y.%m.%d')
+          PREFIX="v${TODAY}"
+
+          # sort -V is version-aware, so .10 sorts after .9 rather than before it.
+          EXISTING=$(git tag --list "${PREFIX}.*" | sort -V | tail -1)
+          if [ -z "$EXISTING" ]; then
+            BUILD_NUM=1
+          else
+            LAST_NUM=$(echo "$EXISTING" | rev | cut -d'.' -f1 | rev)
+            BUILD_NUM=$((LAST_NUM + 1))
+          fi
+
+          VERSION="${PREFIX}.${BUILD_NUM}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "📦 Version: ${VERSION}"
+
+      # Append a deploy record to deploy_log.md for the audit trail.
       - name: Update deploy log
         run: |
           TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M:%S')
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
           TRIGGER="${{ github.event_name }}"
+          VERSION="${{ steps.version.outputs.version }}"
 
-          # Append a markdown table row to the deploy log.
-          # deploy_log.md deliberately keeps its explanatory footer ABOVE the
-          # table so that a plain `>>` append always lands inside the table.
-          # (When the prose sat below the table, every appended row was written
-          # after it and the rendered markdown table silently broke.)
-          echo "| ${TIMESTAMP} | pending-tag | \`${SHORT_SHA}\` | ${TRIGGER} | ✅ success |" >> deploy_log.md
+          # Rows are appended with >>, so the table must stay the last thing in
+          # the file and the explanatory prose has to sit above it. When the
+          # prose was below, every appended row landed after it and the rendered
+          # markdown table silently broke.
+          echo "| ${TIMESTAMP} | ${VERSION} | \`${SHORT_SHA}\` | ${TRIGGER} | ✅ success |" >> deploy_log.md
 
           echo "📝 Deploy log updated"
           echo "   Time: ${TIMESTAMP} UTC"
+          echo "   Version: ${VERSION}"
           echo "   SHA: ${SHORT_SHA}"
 
       # Commit the deploy log update back to main.
@@ -276,39 +306,14 @@ jobs:
         with:
           fetch-depth: 0  # Full history — required for tag listing
 
-      # Generate a unique version tag based on today's date.
-      # If multiple deploys happen on the same day, the build number increments:
-      # v2026.08.14.1, v2026.08.14.2, v2026.08.14.3, etc.
-      - name: Generate version tag
-        id: version
-        run: |
-          # Date-based semantic version: vYYYY.MM.DD.N
-          TODAY=$(date -u '+%Y.%m.%d')
-          PREFIX="v${TODAY}"
-
-          # Find existing tags for today and increment build number.
-          # sort -V does version-aware sorting (handles multi-digit numbers correctly).
-          EXISTING=$(git tag --list "${PREFIX}.*" | sort -V | tail -1)
-          if [ -z "$EXISTING" ]; then
-            BUILD_NUM=1
-          else
-            # Extract the last segment (build number) and increment
-            LAST_NUM=$(echo "$EXISTING" | rev | cut -d'.' -f1 | rev)
-            BUILD_NUM=$((LAST_NUM + 1))
-          fi
-
-          VERSION="${PREFIX}.${BUILD_NUM}"
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-          echo "📦 Version: ${VERSION}"
-
       # Create an annotated tag (not lightweight) so it carries metadata:
       # who created it, when, and what commit it points to.
       - name: Create git tag
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "${{ steps.version.outputs.version }}" -m "Release ${{ steps.version.outputs.version }} — deployed from ${{ github.sha }}"
-          git push origin "${{ steps.version.outputs.version }}"
+          git tag -a "${{ needs.deploy-prod.outputs.version }}" -m "Release ${{ needs.deploy-prod.outputs.version }} — deployed from ${{ github.sha }}"
+          git push origin "${{ needs.deploy-prod.outputs.version }}"
 
       # Create a GitHub Release from the tag. This populates the "Releases"
       # page in your repo with a nicely formatted entry including:
@@ -318,12 +323,12 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.version.outputs.version }}
-          name: ${{ steps.version.outputs.version }}
+          tag_name: ${{ needs.deploy-prod.outputs.version }}
+          name: ${{ needs.deploy-prod.outputs.version }}
           body: |
             ## Deployment
 
-            - **Version**: ${{ steps.version.outputs.version }}
+            - **Version**: ${{ needs.deploy-prod.outputs.version }}
             - **Commit**: ${{ github.sha }}
             - **Deployed**: ${{ github.event.head_commit.timestamp }}
             - **Triggered by**: ${{ github.actor }}
@@ -341,5 +346,5 @@ jobs:
         run: |
           echo "🎉 Full pipeline complete!"
           echo "   Validated ✅ → Staged ✅ → Deployed ✅ → Tagged ✅"
-          echo "   Version: ${{ steps.version.outputs.version }}"
+          echo "   Version: ${{ needs.deploy-prod.outputs.version }}"
           echo "   Live at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"

@@ -1,20 +1,21 @@
 # Deploy Log
 
-Timestamped record of every production deployment.
+Timestamped record of every production deployment and rollback.
 
-_Updated automatically by the deploy pipeline (`deploy-prod` job) and by the rollback workflow.
-Each row is one production deployment or rollback event. New rows are appended to the bottom,
-which is why this note sits above the table rather than below it — an appended row has to land
-inside the table to render._
+Written automatically: the `deploy-prod` job in `.github/workflows/deploy.yml`
+appends a row on each production deploy, and `rollback.yml` appends one on each
+rollback. Rows are appended with `>>`, so the table has to stay the last thing in
+this file and the newest entry is at the bottom. The explanatory prose sits above
+it for that reason — when it sat below, every appended row landed after the
+closing paragraph and the rendered table silently broke.
 
-_Known limitation: the `Version` column reads `pending-tag` for pipeline deploys. The version tag
-is minted by the `tag-release` job, which runs after `deploy-prod` writes this row, so the row is
-written before the tag exists. Cross-reference the commit SHA against the Releases page for the
-version. Rollback rows do record the tag, because a rollback names its target up front._
+The 14 August entry carries no version because of a defect in the pipeline, since
+fixed. The log row was written in `deploy-prod` while the version was computed
+afterwards in `tag-release`, and nothing went back to substitute it, so the column
+could only ever receive the literal placeholder `pending-tag`. The version is now
+computed before the row is written and passed to `tag-release` as a job output,
+so both use one value. An earlier row containing example data has been removed.
 
-| Timestamp (UTC) | Version | Commit SHA | Triggered By | Status |
-|-----------------|---------|------------|--------------|--------|
-| 2026-08-14 01:45:15 | pending-tag (`v2026.08.14.1`) | `b3b6450` | push | ✅ success |
-| 2026-08-14 04:42:33 | pending-tag | `9c5aa9f` | push | ✅ success |
-| 2026-08-14 04:58:18 | pending-tag | `caa6882` | push | ✅ success |
-| 2026-08-14 05:19:56 | pending-tag | `666bc0b` | push | ✅ success |
+| Timestamp (UTC) | Version | Commit | Trigger | Status |
+|---|---|---|---|---|
+| 2026-08-14 01:45:15 | — | `b3b6450` | push | ✅ success |
