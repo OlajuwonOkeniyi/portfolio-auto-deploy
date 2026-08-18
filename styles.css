@@ -1,28 +1,28 @@
 /* =============================================================================
-   Portfolio Styles — Dark theme, minimal, professional
+   Portfolio Styles - Dark theme, minimal, professional
    =============================================================================
    Design system: GitHub-dark inspired palette with constrained typography.
-   Everything fits in a single 640px column — no grid framework needed.
+   Everything fits in a single 640px column - no grid framework needed.
    ============================================================================= */
 
 /* ─── DESIGN TOKENS ──────────────────────────────────────────────────────────
    All colors, spacing, and sizing controlled via custom properties.
    To theme this site: change the values here, everything cascades. */
 :root {
-    --bg: #0d1117;              /* Page background — near-black for contrast */
-    --surface: #161b22;         /* Card/component background — slight elevation */
-    --border: #30363d;          /* Subtle dividers — visible but not distracting */
-    --text-primary: #e6edf3;    /* Main body text — high contrast on dark bg */
-    --text-secondary: #8b949e;  /* Secondary/muted text — descriptions, captions */
-    --accent: #58a6ff;          /* Interactive elements — links, highlights */
-    --accent-hover: #79c0ff;    /* Hover state for accent — slightly brighter */
+    --bg: #0d1117;              /* Page background - near-black for contrast */
+    --surface: #161b22;         /* Card/component background - slight elevation */
+    --border: #30363d;          /* Subtle dividers - visible but not distracting */
+    --text-primary: #e6edf3;    /* Main body text - high contrast on dark bg */
+    --text-secondary: #8b949e;  /* Secondary/muted text - descriptions, captions */
+    --accent: #58a6ff;          /* Interactive elements - links, highlights */
+    --accent-hover: #79c0ff;    /* Hover state for accent - slightly brighter */
     --radius: 8px;              /* Consistent corner rounding across components */
-    --max-width: 640px;         /* Content column width — optimal reading length */
+    --max-width: 640px;         /* Content column width - optimal reading length */
 }
 
 /* ─── RESET ──────────────────────────────────────────────────────────────────
    Minimal reset: normalize box model and remove default margins.
-   Not using a full reset (normalize.css) — overkill for a single-page site. */
+   Not using a full reset (normalize.css) - overkill for a single-page site. */
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
@@ -116,7 +116,7 @@ body {
 
 /* ─── PROJECTS LIST ──────────────────────────────────────────────────────────
    Vertical stack of project cards. Each card has a name (bold) and a
-   one-line description (muted). No links here — keeps it clean. */
+   one-line description (muted). No links here - keeps it clean. */
 .projects {
     margin-bottom: 3rem;
 }
@@ -176,7 +176,7 @@ body {
     margin-top: 0.25rem;
     font-family: 'SF Mono', 'Fira Code', monospace;
     font-size: 0.8rem;
-    opacity: 0.7;              /* De-emphasize — it's metadata, not content */
+    opacity: 0.7;              /* De-emphasize - it's metadata, not content */
 }
 
 /* ─── RESPONSIVE / MOBILE ────────────────────────────────────────────────────
