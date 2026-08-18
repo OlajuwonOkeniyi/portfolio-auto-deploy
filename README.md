@@ -66,7 +66,7 @@ If validation fails, nothing deploys. If staging fails, production isn't touched
 
 GitHub Pages serves production from the `gh-pages` branch (Settings → Pages → Deploy from a branch
 → `gh-pages` / root). Two GitHub environments, `staging` and `production`, are configured so each
-deploy reports its own URL in the Actions UI. No secrets are required — the pipeline runs on the
+deploy reports its own URL in the Actions UI. No secrets are required - the pipeline runs on the
 `GITHUB_TOKEN` that Actions provides automatically.
 
 Day to day that reduces to: edit `site/index.html`, commit, `git push origin main`. The Actions tab
@@ -176,13 +176,13 @@ See [deploy\_log.md](deploy_log.md) for a timestamped log of every production de
 
 ## What Building This Surfaced
 
-Standing this pipeline up and then auditing it turned up six defects. Four are worth reading —
+Standing this pipeline up and then auditing it turned up six defects. Four are worth reading:
 each one is a case where the code looked correct and the failure was silent. The full set is in
 [CHANGELOG.md](CHANGELOG.md).
 
 1. **A quality gate that can't run must fail, not pass.** `validate_html.sh` shelled out to `tidy`
-   and branched on its exit code. When `tidy` wasn't installed the command substitution exited 127
-   — neither 1 (warnings) nor 2 (errors) — so every file fell through to the "clean pass" branch.
+   and branched on its exit code. When `tidy` wasn't installed the command substitution exited 127,
+   neither 1 (warnings) nor 2 (errors), so every file fell through to the "clean pass" branch.
    The gate reported success while validating nothing. Any script dispatching on a tool's exit
    codes needs to assert the tool exists first, and needs a default branch that fails closed.
 
@@ -190,7 +190,7 @@ each one is a case where the code looked correct and the failure was silent. The
    `check_links.sh` used `HTTP_CODE=$(curl -w "%{http_code}" ... || echo "000")`. On a failed
    transfer curl prints `000` *and* exits non\-zero, so the fallback appended a second `000` and the
    variable held `000000`. That matched no branch, so every unreachable host was reported as
-   definitively broken and blocked the deploy — the opposite of the documented intent. Capture
+   definitively broken and blocked the deploy - the opposite of the documented intent. Capture
    output and exit status separately.
 
 3. **`${VAR:-default}` doesn't reset a loop variable.** `:-` substitutes only when a variable is
@@ -199,7 +199,7 @@ each one is a case where the code looked correct and the failure was silent. The
 
 4. **An unresolvable workflow expression renders empty, it doesn't error.** The staging job's
    `environment.url` referenced `steps.deploy.outputs.staging_url`, but `deploy` was the
-   third\-party deploy action, which emits no such output — the value came from a different, unnamed
+   third\-party deploy action, which emits no such output - the value came from a different, unnamed
    step. GitHub reported no problem. The link looked configured and was blank.
 
 ## License

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# validate_html.sh — HTML quality gate using W3C's HTML Tidy
+# validate_html.sh - HTML quality gate using W3C's HTML Tidy
 # =============================================================================
 #
 # WHAT THIS DOES:
@@ -15,7 +15,7 @@
 # - Exit 0: All files pass (errors = 0, warnings are OK)
 # - Exit 1: At least one file has errors, OR no HTML files found
 #
-# DESIGN DECISION — WARNINGS VS ERRORS:
+# DESIGN DECISION - WARNINGS VS ERRORS:
 # We intentionally allow warnings through. Tidy is opinionated about things
 # like implicit <body> tags and proprietary attributes (e.g., aria-label in
 # older tidy versions). Failing on warnings would create too much friction
@@ -43,10 +43,10 @@ echo "────────────────────────�
 # BUG FIX: guard on the validator itself being present.
 # Without this check, `TIDY_OUTPUT=$(tidy ...)` exits 127 ("command not found").
 # 127 is neither 1 (warnings) nor 2 (errors), so every file fell through to the
-# final `else` and was reported "✅ Valid" — the gate passed while validating
+# final `else` and was reported "✅ Valid" - the gate passed while validating
 # nothing at all. A quality gate that cannot run must fail, not pass.
 if ! command -v tidy >/dev/null 2>&1; then
-    echo "❌ 'tidy' is not installed — cannot validate HTML."
+    echo "❌ 'tidy' is not installed - cannot validate HTML."
     echo "   Install it with: sudo apt-get install -y tidy"
     exit 1
 fi
@@ -79,7 +79,7 @@ for file in $HTML_FILES; do
     # BUG FIX: reset TIDY_EXIT at the top of every iteration.
     # The old code relied on `TIDY_EXIT=${TIDY_EXIT:-0}`, but `:-` only
     # substitutes when the variable is *unset*. Once any file failed, TIDY_EXIT
-    # stayed set to 2, and `|| TIDY_EXIT=$?` never fires on success — so every
+    # stayed set to 2, and `|| TIDY_EXIT=$?` never fires on success - so every
     # subsequent clean file inherited the stale 2 and was reported as broken.
     TIDY_EXIT=0
     TIDY_OUTPUT=$(tidy -errors -quiet "$file" 2>&1) || TIDY_EXIT=$?
@@ -107,7 +107,7 @@ for file in $HTML_FILES; do
         echo "$TIDY_OUTPUT" | sed 's/^/     /'
         ERRORS_FOUND=1
     else
-        # Clean pass — no issues at all.
+        # Clean pass - no issues at all.
         echo "  ✅ Valid"
     fi
 done

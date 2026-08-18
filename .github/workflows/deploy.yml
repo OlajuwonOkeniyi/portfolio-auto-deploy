@@ -49,9 +49,9 @@ concurrency:
 
 # --- PERMISSIONS ---
 # Principle of least privilege: we request only what's needed.
-# - contents:write — push tags and update deploy_log.md on main
-# - pages:write — deploy to GitHub Pages
-# - id-token:write — required by GitHub Pages deployment action (OIDC auth)
+# - contents:write - push tags and update deploy_log.md on main
+# - pages:write - deploy to GitHub Pages
+# - id-token:write - required by GitHub Pages deployment action (OIDC auth)
 permissions:
   contents: write
   pages: write
@@ -68,7 +68,7 @@ jobs:
   # JOB 1: VALIDATE
   # ═══════════════════════════════════════════════════════════════════════════
   # WHY: Catch broken HTML and dead links before they reach any environment.
-  # This is the cheapest possible quality gate — runs in ~10s and prevents
+  # This is the cheapest possible quality gate - runs in ~10s and prevents
   # embarrassing broken deploys (404 links, malformed markup, etc.)
   validate:
     name: Validate HTML & Links
@@ -94,7 +94,7 @@ jobs:
 
       # Validate HTML structure. This catches things like unclosed tags,
       # missing alt attributes, and invalid nesting. See scripts/validate_html.sh
-      # for the full logic — it uses tidy's exit codes to distinguish
+      # for the full logic - it uses tidy's exit codes to distinguish
       # warnings (non-blocking) from errors (blocking).
       - name: Run HTML validation
         run: ./scripts/validate_html.sh
@@ -121,11 +121,11 @@ jobs:
   deploy-staging:
     name: Deploy to Staging
     runs-on: ubuntu-latest
-    needs: validate  # Won't run if validation fails — this is the gate
+    needs: validate  # Won't run if validation fails - this is the gate
 
     # GitHub Environment integration gives you:
     # 1. A clickable "View deployment" link in the Actions UI
-    # 2. Environment protection rules (optional — add manual approval if desired)
+    # 2. Environment protection rules (optional - add manual approval if desired)
     # 3. Environment-specific secrets (e.g., NETLIFY_AUTH_TOKEN for staging)
     environment:
       name: staging
@@ -153,7 +153,7 @@ jobs:
 
       # Deploy site content to a staging-specific branch.
       # Using peaceiris/actions-gh-pages because it handles the force-push
-      # to an orphan branch cleanly — no merge conflicts, no history bloat.
+      # to an orphan branch cleanly - no merge conflicts, no history bloat.
       - name: Deploy to staging branch
         id: deploy
         uses: peaceiris/actions-gh-pages@v3
@@ -173,7 +173,7 @@ jobs:
   # ═══════════════════════════════════════════════════════════════════════════
   # JOB 3: DEPLOY TO PRODUCTION
   # ═══════════════════════════════════════════════════════════════════════════
-  # WHY: This is the real deploy — pushes to gh-pages which GitHub Pages
+  # WHY: This is the real deploy - pushes to gh-pages which GitHub Pages
   # serves to the public internet.
   #
   # GATE: Requires BOTH validate AND deploy-staging to succeed.
@@ -182,7 +182,7 @@ jobs:
   deploy-prod:
     name: Deploy to Production
     runs-on: ubuntu-latest
-    needs: [validate, deploy-staging]  # Both must pass — defense in depth
+    needs: [validate, deploy-staging]  # Both must pass - defense in depth
 
     # The version is computed in this job, not in tag-release, because the deploy
     # log is written here. Computing it downstream meant the log could only ever
@@ -206,10 +206,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Full history — needed for commit-back to main
+          fetch-depth: 0  # Full history - needed for commit-back to main
 
       # Deploy to the gh-pages branch that GitHub Pages actually serves.
-      # The CNAME option supports custom domains — leave the secret empty
+      # The CNAME option supports custom domains - leave the secret empty
       # if you're using the default github.io URL.
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -222,7 +222,7 @@ jobs:
 
       # Compute the version BEFORE the log row is written. This used to live in
       # tag-release, which runs after this job, so the row was written with the
-      # literal string "pending-tag" and nothing ever went back to replace it —
+      # literal string "pending-tag" and nothing ever went back to replace it:
       # the Version column could not contain a version. The checkout above uses
       # fetch-depth: 0, so the tag list this reads is complete.
       - name: Generate version tag
@@ -265,7 +265,7 @@ jobs:
 
       # Commit the deploy log update back to main.
       # [skip ci] in the message prevents this commit from triggering
-      # another pipeline run — without it, you'd get infinite loops.
+      # another pipeline run - without it, you'd get infinite loops.
       - name: Commit deploy log
         run: |
           git config user.name "github-actions[bot]"
@@ -287,12 +287,12 @@ jobs:
   # ═══════════════════════════════════════════════════════════════════════════
   # WHY: Every production deploy gets a unique version tag. This serves
   # three purposes:
-  # 1. Rollback target — you can deploy any previous tag via rollback.yml
-  # 2. Audit trail — `git tag` shows exactly what was live and when
-  # 3. Release notes — GitHub Releases page becomes a deploy history
+  # 1. Rollback target - you can deploy any previous tag via rollback.yml
+  # 2. Audit trail - `git tag` shows exactly what was live and when
+  # 3. Release notes - GitHub Releases page becomes a deploy history
   #
   # VERSIONING SCHEME: vYYYY.MM.DD.N (date-based with build number)
-  # This is simpler than semver for a portfolio site — you don't have
+  # This is simpler than semver for a portfolio site - you don't have
   # "breaking changes" in a static site, so date-based makes more sense.
   tag-release:
     name: Tag & Release
@@ -304,7 +304,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Full history — required for tag listing
+          fetch-depth: 0  # Full history - required for tag listing
 
       # Create an annotated tag (not lightweight) so it carries metadata:
       # who created it, when, and what commit it points to.
@@ -312,7 +312,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "${{ needs.deploy-prod.outputs.version }}" -m "Release ${{ needs.deploy-prod.outputs.version }} — deployed from ${{ github.sha }}"
+          git tag -a "${{ needs.deploy-prod.outputs.version }}" -m "Release ${{ needs.deploy-prod.outputs.version }} - deployed from ${{ github.sha }}"
           git push origin "${{ needs.deploy-prod.outputs.version }}"
 
       # Create a GitHub Release from the tag. This populates the "Releases"
@@ -340,7 +340,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Final summary — confirms the entire pipeline completed successfully.
+      # Final summary - confirms the entire pipeline completed successfully.
       # The arrow chain makes it immediately obvious what happened at a glance.
       - name: Pipeline complete
         run: |

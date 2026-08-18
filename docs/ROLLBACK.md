@@ -64,7 +64,7 @@ git tag --list 'v*' --sort=-version:refname | head -10
 
 ### Option 3: GitHub Releases page
 
-Go to the repository's Releases page — each deploy creates a release with the commit message.
+Go to the repository's Releases page - each deploy creates a release with the commit message.
 
 ## What Happens During Rollback
 
@@ -77,11 +77,11 @@ Go to the repository's Releases page — each deploy creates a release with the 
 
 ## After Rollback
 
-1. **Verify the site is working** — check the live URL
-2. **Investigate the issue** — look at what changed between the rolled-back tag and the broken deploy
-3. **Fix on main** — commit the fix
-4. **Push to main** — the pipeline will validate, stage, and deploy the fix
-5. **Confirm** — check that the new deploy works correctly
+1. **Verify the site is working** - check the live URL
+2. **Investigate the issue** - look at what changed between the rolled-back tag and the broken deploy
+3. **Fix on main** - commit the fix
+4. **Push to main** - the pipeline will validate, stage, and deploy the fix
+5. **Confirm** - check that the new deploy works correctly
 
 ## Emergency: Manual Rollback (No GitHub Actions)
 
@@ -112,5 +112,5 @@ The best rollback is one you never need:
 
 - The validation step catches most HTML issues
 - Staging gives you a preview before prod
-- Keep changes small — easier to identify what broke
+- Keep changes small - easier to identify what broke
 - Check the Actions tab after pushing to confirm success

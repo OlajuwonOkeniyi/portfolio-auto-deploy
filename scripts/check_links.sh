@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# check_links.sh — Verify all links in HTML files are reachable
+# check_links.sh - Verify all links in HTML files are reachable
 # =============================================================================
 #
 # WHAT THIS DOES:
@@ -58,7 +58,7 @@ for file in $HTML_FILES; do
     echo ""
     echo "Scanning: $file"
 
-    # Get the directory containing this HTML file — needed for resolving
+    # Get the directory containing this HTML file - needed for resolving
     # relative paths (e.g., href="styles.css" resolves relative to the HTML file)
     FILE_DIR=$(dirname "$file")
 
@@ -103,7 +103,7 @@ for file in $HTML_FILES; do
             # well and the substitution captured "000" + "000" = "000000".
             # That value matched neither the 2xx/3xx pattern nor the "000"
             # timeout branch, so every unreachable host fell through to the
-            # "definitively broken" case and hard-failed the deploy — the exact
+            # "definitively broken" case and hard-failed the deploy - the exact
             # opposite of the documented behaviour above. Capture curl's output
             # and its exit status separately, then normalise.
             HTTP_CODE=$(curl -o /dev/null -s -w "%{http_code}" \
@@ -114,19 +114,19 @@ for file in $HTML_FILES; do
             [[ "$HTTP_CODE" =~ ^[0-9]{3}$ ]] || HTTP_CODE="000"
 
             if [[ "$HTTP_CODE" =~ ^(2|3)[0-9][0-9]$ ]]; then
-                # 2xx (success) or 3xx (redirect) — link is alive
+                # 2xx (success) or 3xx (redirect) - link is alive
                 echo "  ✅ ${link} (${HTTP_CODE})"
             elif [ "$HTTP_CODE" = "000" ]; then
-                # Timeout or DNS failure. Warn but don't fail — this might be
+                # Timeout or DNS failure. Warn but don't fail - this might be
                 # a CI network issue, not a broken link.
-                echo "  ⚠️  ${link} (timeout/unreachable — skipping)"
+                echo "  ⚠️  ${link} (timeout/unreachable - skipping)"
             elif [[ "$HTTP_CODE" =~ ^(403|429|999)$ ]]; then
                 # Bot protection or rate limiting. The host is up and the URL
                 # resolves; it just refuses automated clients. Not our bug, and
                 # not worth blocking a deploy over.
-                echo "  ⚠️  ${link} (HTTP ${HTTP_CODE} — bot protection/rate limit, not treated as broken)"
+                echo "  ⚠️  ${link} (HTTP ${HTTP_CODE} - bot protection/rate limit, not treated as broken)"
             else
-                # 4xx (not found) or 5xx (server error) — definitively broken
+                # 4xx (not found) or 5xx (server error) - definitively broken
                 echo "  ❌ ${link} (HTTP ${HTTP_CODE})"
                 ERRORS_FOUND=1
             fi

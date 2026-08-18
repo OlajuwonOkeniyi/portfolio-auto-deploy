@@ -7,12 +7,12 @@ This project uses two deployment environments to separate "testing it" from "it'
 - **Branch:** `gh-pages-staging`
 - **Purpose:** Preview deploys before they go to production
 - **URL:** Same repo, different branch (or configure a second GitHub Pages site)
-- **Protection:** None — deploys automatically after validation passes
+- **Protection:** None - deploys automatically after validation passes
 - **Lifetime:** Overwritten on every push to main
 
 ### How to view staging
 
-Option 1: Check the workflow run summary — it includes the staging URL.
+Option 1: Check the workflow run summary - it includes the staging URL.
 Option 2: Switch the GitHub Pages source to `gh-pages-staging` temporarily.
 Option 3: Clone the branch locally and open `index.html`.
 
@@ -21,7 +21,7 @@ Option 3: Clone the branch locally and open `index.html`.
 - **Branch:** `gh-pages`
 - **Purpose:** The live site visitors see
 - **URL:** https://olajuwonokeniyi.github.io/portfolio-auto-deploy/
-- **Protection:** Optional — can add required reviewers in GitHub environment settings
+- **Protection:** Optional - can add required reviewers in GitHub environment settings
 - **Lifetime:** Persists until next deploy or rollback
 
 ### Adding manual approval for production
@@ -43,7 +43,7 @@ Secrets are set at the repository level (Settings → Secrets and variables → 
 | Secret | Environment | Purpose |
 |--------|-------------|---------|
 | `GITHUB_TOKEN` | Both | Automatically provided by GitHub Actions |
-| `CUSTOM_DOMAIN` | Production | Optional — your custom domain (e.g., `yourdomain.dev`) |
+| `CUSTOM_DOMAIN` | Production | Optional - your custom domain (e.g., `yourdomain.dev`) |
 
 ### Why not environment-specific secrets?
 

@@ -19,7 +19,7 @@
 # After rolling back, you should fix the issue on main and push a normal deploy.
 # Think of this as "serve the old version while I fix the new one."
 #
-# TRIGGER: Manual only (workflow_dispatch) — you never want this running
+# TRIGGER: Manual only (workflow_dispatch) - you never want this running
 # automatically. Rollbacks are a human decision.
 # =============================================================================
 
@@ -38,7 +38,7 @@ on:
       reason:
         description: 'Reason for rollback (logged for audit trail)'
         required: false
-        default: 'Manual rollback — issue with latest deploy'
+        default: 'Manual rollback - issue with latest deploy'
         type: string
 
 # Permissions: write access to contents (for committing the rollback log)
@@ -54,7 +54,7 @@ jobs:
 
     # Uses the production environment so the same protection rules apply.
     # If you have required reviewers on production, someone still needs to
-    # approve the rollback — which is the right behavior for prod changes.
+    # approve the rollback - which is the right behavior for prod changes.
     environment:
       name: production
       url: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
@@ -62,7 +62,7 @@ jobs:
     steps:
       # ─── STEP 1: INPUT VALIDATION ───────────────────────────────────────
       # Validate the tag format BEFORE doing anything else.
-      # We expect vYYYY.MM.DD.N — reject anything that doesn't match.
+      # We expect vYYYY.MM.DD.N - reject anything that doesn't match.
       # This prevents typos from causing confusing downstream failures.
       - name: Validate tag format
         run: |
@@ -101,7 +101,7 @@ jobs:
 
       # ─── STEP 4: CHECKOUT THE TARGET VERSION ───────────────────────────
       # Switch to the tagged commit. After this, the working directory
-      # contains exactly what was deployed at that version — including
+      # contains exactly what was deployed at that version - including
       # the site/ folder we'll re-deploy.
       - name: Checkout target tag
         run: |
@@ -150,7 +150,7 @@ jobs:
 
       # ─── STEP 7: SUMMARY ───────────────────────────────────────────────
       # Clear confirmation of what happened, plus a reminder about next steps.
-      # The warning about main branch is important — people forget that
+      # The warning about main branch is important - people forget that
       # rollback doesn't fix the underlying issue, it just buys you time.
       - name: Rollback complete
         run: |
